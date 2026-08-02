@@ -60,6 +60,7 @@ export interface LessonStep {
   hint?: string;              // 第一次错误提示（口型/首音/图片）
   answer: string | number | string[];
   choices?: string[];
+  choicesCn?: string[];   // 与 choices 一一对齐的中文翻译；选项朗读时「英文 + 中文」成对念
   ui:
     | 'tap_choice' | 'blend' | 'order_words' | 'read_along'
     | 'drag_count' | 'number_pad' | 'shape_tap' | 'clock_set' | 'bucket_sort'

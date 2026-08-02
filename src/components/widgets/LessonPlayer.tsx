@@ -165,7 +165,12 @@ function TapChoice({ step, onResult }: { step: LessonStep; onResult: (ok: boolea
             </button>
             {isSpeakable(c) && (
               <button
-                onClick={(e) => { e.stopPropagation(); speakAuto(c); }}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  const idx = step.choices?.indexOf(c) ?? -1;
+                  const cn = idx >= 0 ? step.choicesCn?.[idx] : undefined;
+                  if (cn && isChinese(cn)) speakSequence([c, cn]); else speakAuto(c);
+                }}
                 className="text-xs text-forest-600 tap flex items-center gap-1 px-2.5 py-1 rounded-full bg-forest-100/70 hover:bg-forest-100 transition"
                 aria-label={`听 ${c}`}
               >
@@ -521,40 +526,35 @@ function extractEnglishPhrases(text: string): string[] {
     .filter((p) => p.length > 0 && /[a-zA-Z]/.test(p) && !/[\u4e00-\u9fff]/.test(p));
 }
 
-/** 「看答案」面板：显示正确答案 + 发音按钮 + 继续下一题 */
+/** 「看答案」面板：显示正确答案 + 发音按钮 + 继续下一题。
+ *  选择题会把每个选项的「英文 + 中文翻译」成对朗读，例如 "We go to school" → "我們去學校"。 */
 function AnswerView({ step, onContinue }: { step: LessonStep; onContinue: () => void }) {
   let answerText = '';
   let speakText = '';
-  // 选择题专用：自动 + 手动朗读时，依次读出所有选项 + 正确答案
+  // 选择题专用：自动 + 手动朗读时，依次「英文选项 + 中文翻译」成对念出
   const allSpeakTexts: string[] = [];
+  const choices = Array.isArray(step.choices) ? step.choices : [];
+  const choicesCn = Array.isArray(step.choicesCn) ? step.choicesCn : [];
+  const pushPair = (en: string | number, cn?: string) => {
+    const e = String(en);
+    if (isSpeakable(e)) allSpeakTexts.push(e);
+    if (cn && isChinese(cn)) allSpeakTexts.push(cn);
+  };
   switch (step.ui) {
     case 'tap_choice':
       answerText = String(step.answer);
       speakText = isSpeakable(answerText) ? answerText : '';
-      // 把所有选项（可读的英文/中文）依次加入朗读队列
-      if (Array.isArray(step.choices)) {
-        for (const c of step.choices) {
-          const s = String(c);
-          if (isSpeakable(s)) allSpeakTexts.push(s);
-        }
-        // 正确答案在最后单独念一遍，强化记忆
-        if (speakText && !allSpeakTexts.includes(speakText)) allSpeakTexts.push(speakText);
-      }
+      // 每个选项（英文 + 对应中文）成对加入朗读队列；正确答案已包含在选项里，不再重复
+      choices.forEach((c, idx) => pushPair(c, choicesCn[idx]));
       break;
     case 'blend': {
       const a = Array.isArray(step.answer) ? step.answer.join('') : String(step.answer);
-      answerText = a;
-      speakText = a;
-      break;
+      answerText = a; speakText = a; break;
     }
     case 'read_along':
-      answerText = String(step.answer);
-      speakText = answerText;
-      break;
+      answerText = String(step.answer); speakText = answerText; break;
     case 'order_words':
-      answerText = String(step.answer);
-      speakText = answerText;
-      break;
+      answerText = String(step.answer); speakText = answerText; break;
     case 'drag_count':
     case 'number_pad':
       answerText = String(step.answer);
@@ -566,7 +566,7 @@ function AnswerView({ step, onContinue }: { step: LessonStep; onContinue: () => 
       speakText = isSpeakable(answerText) ? answerText : '';
   }
   useEffect(() => {
-    // 进入「看答案」自动朗读：选择题把所有选项念完 + 正确答案；其他题只念答案
+    // 进入「看答案」自动朗读：选择题把所有选项「英文 + 中文」成对念完；其他题只念答案
     const queue = allSpeakTexts.length ? allSpeakTexts : (speakText ? [speakText] : []);
     if (queue.length) {
       const t = setTimeout(() => speakSequence(queue), 300);

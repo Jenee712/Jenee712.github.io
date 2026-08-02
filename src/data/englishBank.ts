@@ -33,14 +33,7 @@ function shuffle<T>(arr: T[], seed: number): T[] {
   }
   return a;
 }
-/** 從 pool 中挑 4 個選項（含正解），正解不排第一 */
-function choicesFor(answer: string, pool: string[]): string[] {
-  if (pool.length <= 4) return shuffle([...pool], answer.length * 7 + 3);
-  const others = shuffle(pool.filter((w) => w !== answer), answer.length * 7 + 3).slice(0, 3);
-  const out = shuffle([answer, ...others], answer.length * 13 + 5);
-  if (out[0] === answer) [out[0], out[1]] = [out[1], out[0]];
-  return out;
-}
+// choicesFor 已重構為下方的 pickChoices（回傳 choices + 與之一一對齊的 choicesCn）
 const letters = (w: string) => w.split('');
 
 // ============================================================
@@ -112,6 +105,39 @@ const THEMES_EXT: { id: string; title: string; pairs: Pair[]; sentence: { en: st
     ], sentence: { en: 'The cat is big.', cn: '貓很大。' } },
 ];
 
+// 單字/短語 英→中 翻譯字典（覆蓋題庫所有出現過的英文詞；句型填空選項、閱讀理解選項都靠它補中文）
+const WORD_CN: Record<string, string> = {};
+[...THEMES_BASIC, ...THEMES_EXT].forEach((t) =>
+  t.pairs.forEach((p) => { WORD_CN[p.en] = p.cn; })
+);
+Object.assign(WORD_CN, {
+  see: '看', am: '是', are: '是', is: '是', have: '有', like: '喜歡', can: '會',
+  go: '去', we: '我們', you: '你', he: '他', i: '我', this: '這', that: '那',
+  it: '它', here: '這裡', where: '哪裡', there: '那裡', two: '兩', big: '大',
+  small: '小', book: '書', dog: '狗', cow: '牛', cat: '貓', tree: '樹',
+  flower: '花', grass: '草', rain: '雨', sun: '太陽', apple: '蘋果',
+  sweet: '甜', lake: '湖', school: '學校', mum: '媽媽',
+});
+
+interface ChoiceItem { en: string; cn: string }
+
+/** 從 pool（含正解）中挑 3~4 個選項，正解不排第一；同時回傳與 choices 一一對齊的 choicesCn（中文翻譯，無則 ''）。
+ *  - 選項本身是英文（看中文選英文 / 句型整句 / 閱讀理解）：choicesCn 給中文，朗讀時「英文 + 中文」成對念。
+ *  - 選項本身是中文（看英文選中文）：呼叫方把 cn 當 en、cn 欄留空，朗讀時只念中文。 */
+function pickChoices(answer: string, pool: ChoiceItem[]): { choices: string[]; choicesCn: string[] } {
+  const list = pool.filter((p) => p.en !== answer);
+  if (list.length <= 3) {
+    const items = shuffle([...pool], answer.length * 7 + 3);
+    if (items[0]?.en === answer && items.length > 1) [items[0], items[1]] = [items[1], items[0]];
+    return { choices: items.map((i) => i.en), choicesCn: items.map((i) => i.cn) };
+  }
+  const others = shuffle(list, answer.length * 7 + 3).slice(0, 3);
+  const ans = pool.find((p) => p.en === answer)!;
+  const items = shuffle([ans, ...others], answer.length * 13 + 5);
+  if (items[0]?.en === answer) [items[0], items[1]] = [items[1], items[0]];
+  return { choices: items.map((i) => i.en), choicesCn: items.map((i) => i.cn) };
+}
+
 /**
  * 構造一個主題詞課：每課 4 關，難度遞進。
  *   1) 看英文選中文（英→中）
@@ -122,18 +148,18 @@ const THEMES_EXT: { id: string; title: string; pairs: Pair[]; sentence: { en: st
 function makeVocabLesson(prefix: string, i: number, t: { id: string; title: string; pairs: Pair[]; sentence: { en: string; cn: string } }): Lesson {
   const p0 = t.pairs[0];
   const p1 = t.pairs[1];
-  const cnPool = t.pairs.map((x) => x.cn);
-  const enPool = t.pairs.map((x) => x.en);
+  const c1 = pickChoices(p0.cn, t.pairs.map((p) => ({ en: p.cn, cn: '' })));
+  const c2 = pickChoices(p1.en, t.pairs.map((p) => ({ en: p.en, cn: p.cn })));
   const steps: LessonStep[] = [
     { id: `${prefix}-${t.id}-1`, ui: 'tap_choice',
       prompt: `"${p0.en}" 的中文是什麼？`,
       answer: p0.cn,
-      choices: choicesFor(p0.cn, cnPool),
+      choices: c1.choices, choicesCn: c1.choicesCn,
       hint: `聽一聽 ${p0.en}，再想對應的中文` },
     { id: `${prefix}-${t.id}-2`, ui: 'tap_choice',
       prompt: `"${p1.cn}" 的英文是哪個？`,
       answer: p1.en,
-      choices: choicesFor(p1.en, enPool),
+      choices: c2.choices, choicesCn: c2.choicesCn,
       hint: `看到中文，先想它的英文` },
     { id: `${prefix}-${t.id}-3`, ui: 'blend',
       prompt: `拼寫出 "${t.pairs[2].cn}" 的英文`,
@@ -180,16 +206,18 @@ const SENT: { id: string; title: string; en: string; cn: string; blank: { positi
 function makeSentenceLesson(s: typeof SENT[number], i: number): Lesson {
   const enWords = s.en.split(' ');
   const cnWords = s.cn.split('');
+  const c1 = pickChoices(s.en, SENT.map((x) => ({ en: x.en, cn: x.cn })));
+  const c2 = pickChoices(s.blank.answer, s.blank.choices.map((en) => ({ en, cn: WORD_CN[en] ?? '' })));
   const steps: LessonStep[] = [
     { id: `sn-${s.id}-1`, ui: 'tap_choice',
       prompt: `中文：「${s.cn}」 — 對應的英文句是？`,
       answer: s.en,
-      choices: choicesFor(s.en, SENT.flatMap((x) => [x.en]).filter((x) => x !== s.en)),
+      choices: c1.choices, choicesCn: c1.choicesCn,
       hint: `先在腦中把中文翻成英文` },
     { id: `sn-${s.id}-2`, ui: 'tap_choice',
       prompt: `填空：「${enWords.map((w, idx) => (idx === s.blank.position ? '____' : w)).join(' ')}」`,
       answer: s.blank.answer,
-      choices: s.blank.choices,
+      choices: c2.choices, choicesCn: c2.choicesCn,
       hint: `中文是「${s.cn}」` },
     { id: `sn-${s.id}-3`, ui: 'order_words',
       prompt: `排成英文句：${enWords.slice().reverse().join(' / ')}`,
@@ -205,50 +233,51 @@ const sentenceLessons: Lesson[] = SENT.map((s, i) => makeSentenceLesson(s, i));
 // ============================================================
 // 4. 閱讀（reading）— 中英對照短文 + 中英對照理解題
 // ============================================================
-const READ: { passageEn: string; passageCn: string; q: string; qEn: string; a: string; options: string[] }[] = [
+const READ: { passageEn: string; passageCn: string; q: string; qEn: string; a: string; options: string[]; optionsCn: string[] }[] = [
   { passageEn: 'I have a cat. The cat is big. I like my cat.',
     passageCn: '我有一隻貓。這隻貓很大。我喜歡我的貓。',
     q: '誰是大的？', qEn: 'Who is big?',
-    a: 'the cat', options: ['the cat', 'the dog', 'the book'] },
+    a: 'the cat', options: ['the cat', 'the dog', 'the book'], optionsCn: ['這隻貓', '這隻狗', '這本書'] },
   { passageEn: 'The sun is red. The sky is blue. We play outside.',
     passageCn: '太陽是紅的。天空是藍的。我們在外面玩。',
     q: '天空是什麼顏色？', qEn: 'What colour is the sky?',
-    a: 'blue', options: ['blue', 'red', 'green'] },
+    a: 'blue', options: ['blue', 'red', 'green'], optionsCn: ['藍色', '紅色', '綠色'] },
   { passageEn: 'Tom can run. Tom can jump. Tom is happy.',
     passageCn: '湯姆會跑。湯姆會跳。湯姆很開心。',
     q: 'Tom 會做什麼？', qEn: 'What can Tom do?',
-    a: 'run and jump', options: ['run and jump', 'sing and swim', 'read and write'] },
+    a: 'run and jump', options: ['run and jump', 'sing and swim', 'read and write'], optionsCn: ['跑和跳', '唱和游', '讀和寫'] },
   { passageEn: 'I see a cow. The cow is on the grass.',
     passageCn: '我看見一頭牛。牛在草地上。',
     q: '牛在哪裡？', qEn: 'Where is the cow?',
-    a: 'on the grass', options: ['on the grass', 'in the tree', 'under the bed'] },
+    a: 'on the grass', options: ['on the grass', 'in the tree', 'under the bed'], optionsCn: ['在草地上', '在樹上', '在床下'] },
   { passageEn: 'Mum has a book. I have a pen. We read.',
     passageCn: '媽媽有一本書。我有一支筆。我們一起讀書。',
     q: '誰有書？', qEn: 'Who has a book?',
-    a: 'Mum', options: ['Mum', 'I', 'the cat'] },
+    a: 'Mum', options: ['Mum', 'I', 'the cat'], optionsCn: ['媽媽', '我', '這隻貓'] },
   { passageEn: 'A dog and a cat. The dog is small. The cat is big.',
     passageCn: '一隻狗和一隻貓。狗很小。貓很大。',
     q: '誰比較小？', qEn: 'Who is smaller?',
-    a: 'the dog', options: ['the dog', 'the cat', 'the boy'] },
+    a: 'the dog', options: ['the dog', 'the cat', 'the boy'], optionsCn: ['這隻狗', '這隻貓', '這個男孩'] },
   { passageEn: 'The rain is cold. We stay at home.',
     passageCn: '雨很冷。我們待在家裡。',
     q: '為什麼留在家？', qEn: 'Why stay at home?',
-    a: 'the rain is cold', options: ['the rain is cold', 'the sun is hot', 'the dog is big'] },
+    a: 'the rain is cold', options: ['the rain is cold', 'the sun is hot', 'the dog is big'], optionsCn: ['雨很冷', '太陽很熱', '狗很大'] },
   { passageEn: 'I like the red apple. The apple is sweet.',
     passageCn: '我喜歡紅蘋果。蘋果很甜。',
     q: '蘋果是什麼味道？', qEn: 'How is the apple?',
-    a: 'sweet', options: ['sweet', 'cold', 'small'] },
+    a: 'sweet', options: ['sweet', 'cold', 'small'], optionsCn: ['甜', '冷', '小'] },
   { passageEn: 'Ben can swim. He swims in the lake.',
     passageCn: 'Ben 會游泳。他在湖裡游。',
     q: 'Ben 在哪裡游泳？', qEn: 'Where does Ben swim?',
-    a: 'in the lake', options: ['in the lake', 'on the bed', 'at school'] },
+    a: 'in the lake', options: ['in the lake', 'on the bed', 'at school'], optionsCn: ['在湖裡', '在床上', '在學校'] },
   { passageEn: 'We go to school. We see the tree and the flower.',
     passageCn: '我們去學校。我們看見樹和花。',
     q: '我們看到什麼？', qEn: 'What do we see?',
-    a: 'a tree and a flower', options: ['a tree and a flower', 'a cat and a dog', 'a book and a pen'] },
+    a: 'a tree and a flower', options: ['a tree and a flower', 'a cat and a dog', 'a book and a pen'], optionsCn: ['一棵樹和一朵花', '一隻貓和一隻狗', '一本書和一枝筆'] },
 ];
 
 function makeReadingLesson(r: typeof READ[number], i: number): Lesson {
+  const c2 = pickChoices(r.a, r.options.map((en, k) => ({ en, cn: r.optionsCn[k] })));
   const steps: LessonStep[] = [
     { id: `rd-${i + 1}-1`, ui: 'read_along',
       prompt: `中英對照：${r.passageCn}\n\n${r.passageEn}`,
@@ -256,7 +285,7 @@ function makeReadingLesson(r: typeof READ[number], i: number): Lesson {
     { id: `rd-${i + 1}-2`, ui: 'tap_choice',
       prompt: `${r.q}  (${r.qEn})`,
       answer: r.a,
-      choices: choicesFor(r.a, r.options),
+      choices: c2.choices, choicesCn: c2.choicesCn,
       hint: '回到故事裡找答案' },
   ];
   return { id: `eng-rd-${i + 1}`, index: i + 1, title: `閱讀 · 第 ${i + 1} 篇`, durationMin: 10, kind: 'read_along', steps };
