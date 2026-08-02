@@ -43,23 +43,45 @@ const PILOTS: Pilot[] = [
 const ENEMY_NAMES = ['暗影戰機', '火焰飛龍', '冰霜巨人', '雷電風暴', '森林守護者', '深海漩渦'];
 const ENEMY_CHARS: AvatarKey[] = ['corgi', 'cat', 'bear', 'deer', 'rabbit', 'bird', 'penguin', 'lop'];
 
+// ---------- 滿屏方陣設定 ----------
+const GRID_COLS = 10;
+const GRID_ROWS = 10;
+const TOTAL_PLANES = GRID_COLS * GRID_ROWS; // 100 台
+const DESCEND_RATE = 0.05;   // 方陣每 tick 下壓幅度（百分比）
+const SWAY_RATE = 0.22;      // 方陣左右擺動幅度（百分比）
+const SWAY_LIMIT = 7;        // 擺動邊界
+const LOSE_LINE = 82;        // 敵機壓到這條線就輸
+
+function colX(c: number) { return 6 + (c * (88 / (GRID_COLS - 1))); }   // 6% ~ 94%
+function baseRowY(r: number) { return 9 + r * 3.9; }                     // 9% ~ 44.1%
+
+function isEliteCell(row: number, col: number) {
+  // 6 個精英機（⭐）分散在方陣四角與中段，會向下反擊
+  return (
+    (row === 0 && (col === 0 || col === 9)) ||
+    (row === 9 && (col === 0 || col === 9)) ||
+    (row === 4 && (col === 4 || col === 5))
+  );
+}
+
 // ---------- 遊戲內部狀態 ----------
 interface Enemy {
   id: number;
-  x: number;       // 0~100 百分比
-  y: number;       // 0~100 百分比（0=頂部, 100=底部）
+  x: number;       // 0~100 百分比（由方陣格 + 偏移計算後填入）
+  y: number;       // 0~100 百分比
   hp: number;
   maxHp: number;
   char: AvatarKey;
-  vy: number;      // 每 tick 下移量
-  elite?: boolean; // 精英機（⭐，會向下射擊）
+  elite?: boolean;
+  col: number;
+  row: number;
   lastShot: number;
 }
 interface Bullet {
   id: number;
   x: number;
   y: number;
-  targetId: number;
+  targetId: number; // -1 = 直上（方陣普通子彈）；>=0 = 追蹤（技能）
   dmg: number;
 }
 interface EnemyBullet {
@@ -72,31 +94,27 @@ interface GameState {
   enemies: Enemy[];
   bullets: Bullet[];
   enemyBullets: EnemyBullet[];
-  playerX: number;        // 0~100 百分比（飛機水平位置）
-  playerXTarget: number;  // 平滑移動目標
+  playerX: number;
+  playerXTarget: number;
   playerHp: number;
   playerShield: number;
   spawned: number;
   total: number;
   kills: number;
   lastFire: number;
-  lastSpawn: number;
   fireBoostUntil: number;
   invulnUntil: number;
   freezeUntil: number;
   finished: boolean;
   nextId: number;
+  formationY: number;  // 方陣下壓偏移
+  formationX: number;  // 方陣左右偏移
+  formationDir: number;
 }
 
-// 子彈等級：每擊落 5 架升一級（最多 5 級）
 function bulletLevelOf(kills: number) {
-  return Math.min(5, 1 + Math.floor(kills / 5));
+  return Math.min(5, 1 + Math.floor(kills / 8));
 }
-// 敵機等級：依生成序號遞增，每 4 架出現一隻精英機
-function enemyTierOf(spawned: number) {
-  return 1 + Math.floor(spawned / 4);
-}
-
 function clamp(v: number, min: number, max: number) {
   return Math.max(min, Math.min(max, v));
 }
@@ -115,18 +133,18 @@ export function BattlePage() {
   const [result, setResult] = useState<'win' | 'lose' | null>(null);
   const [skillUsed, setSkillUsed] = useState(false);
   const [showRecords, setShowRecords] = useState(false);
-  const [hpView, setHpView] = useState(100); // 用於進度條平滑顯示
+  const [hpView, setHpView] = useState(100);
   const [shieldView, setShieldView] = useState(0);
   const fieldRef = useRef<HTMLDivElement>(null);
 
-  // 遊戲狀態放在 ref，避免 setInterval 閉包拿到舊值
   const game = useRef<GameState>({
     enemies: [], bullets: [], enemyBullets: [],
     playerX: 50, playerXTarget: 50,
     playerHp: 100, playerShield: 0,
-    spawned: 0, total: 12, kills: 0,
-    lastFire: 0, lastSpawn: 0, fireBoostUntil: 0, invulnUntil: 0, freezeUntil: 0,
+    spawned: TOTAL_PLANES, total: TOTAL_PLANES, kills: 0,
+    lastFire: 0, fireBoostUntil: 0, invulnUntil: 0, freezeUntil: 0,
     finished: false, nextId: 1,
+    formationY: 0, formationX: 0, formationDir: 1,
   });
   const [, force] = useReducer(x => x + 1, 0);
 
@@ -147,13 +165,35 @@ export function BattlePage() {
     setSkillUsed(false);
     setHpView(100);
     setShieldView(0);
+
+    // 擺好 100 台敵機方陣
+    const enemies: Enemy[] = [];
+    let id = 1;
+    for (let row = 0; row < GRID_ROWS; row++) {
+      for (let col = 0; col < GRID_COLS; col++) {
+        const elite = isEliteCell(row, col);
+        const maxHp = elite ? 6 : 2 + Math.floor((GRID_ROWS - 1 - row) / 4); // 越上排越厚
+        enemies.push({
+          id: id++,
+          x: colX(col),
+          y: baseRowY(row),
+          hp: maxHp, maxHp,
+          char: ENEMY_CHARS[Math.floor(Math.random() * ENEMY_CHARS.length)],
+          elite,
+          col, row,
+          lastShot: Date.now() + 1500 + Math.random() * 2000,
+        });
+      }
+    }
+
     game.current = {
-      enemies: [], bullets: [], enemyBullets: [],
+      enemies, bullets: [], enemyBullets: [],
       playerX: 50, playerXTarget: 50,
       playerHp: 100, playerShield: 0,
-      spawned: 0, total: 12 + Math.floor(studyBonus / 2),
-      kills: 0, lastFire: 0, lastSpawn: 0, fireBoostUntil: 0, invulnUntil: 0, freezeUntil: 0,
-      finished: false, nextId: 1,
+      spawned: TOTAL_PLANES, total: TOTAL_PLANES, kills: 0,
+      lastFire: 0, fireBoostUntil: 0, invulnUntil: 0, freezeUntil: 0,
+      finished: false, nextId: id,
+      formationY: 0, formationX: 0, formationDir: 1,
     };
     setPhase('play');
   };
@@ -168,14 +208,12 @@ export function BattlePage() {
       case 'cat':    g.invulnUntil = Date.now() + 4000; break;
       case 'bear':   g.playerShield = 40; setShieldView(40); break;
       case 'deer': {
-        // 立即擊毀當前血量最低的一架敵機
         const target = [...g.enemies].sort((a, b) => a.hp - b.hp)[0];
         if (target) { g.enemies = g.enemies.filter(e => e.id !== target.id); g.kills += 1; }
         break;
       }
       case 'rabbit': {
-        // 立刻對最近的 3 架補 3 發子彈
-        const targets = [...g.enemies].sort((a, b) => a.y - b.y).slice(0, 3);
+        const targets = [...g.enemies].sort((a, b) => b.y - a.y).slice(0, 3);
         for (const t of targets) {
           g.bullets.push({ id: g.nextId++, x: g.playerX, y: 84, targetId: t.id, dmg: pilot.stats.attack + Math.floor(studyBonus / 2) });
         }
@@ -192,30 +230,28 @@ export function BattlePage() {
     force();
   };
 
-  // 發射一輪子彈：依等級散射（多發 + 傷害提升），從飛機當前位置出發
-  const fireSpread = (targetId: number) => {
+  // 直上子彈：依等級散射（多發），不追蹤，靠通道碰撞打中同列敵機
+  const fireStraight = () => {
     const g = game.current;
     if (!pilot) return;
     const lvl = bulletLevelOf(g.kills);
     const count = lvl; // 1~5 發
     const baseDmg = pilot.stats.attack + Math.floor(studyBonus / 2) + (lvl - 1) * 3;
-    const span = 16; // 散射水平跨度（百分比）
+    const span = 22;
     for (let i = 0; i < count; i++) {
       const off = count === 1 ? 0 : -span / 2 + (span * i) / (count - 1);
-      g.bullets.push({ id: g.nextId++, x: clamp(g.playerX + off, 0, 100), y: 84, targetId, dmg: baseDmg });
+      g.bullets.push({ id: g.nextId++, x: clamp(g.playerX + off, 0, 100), y: 84, targetId: -1, dmg: baseDmg });
     }
   };
 
-  // 手動點擊：飛機飛向點的位置，並對最近敵機集火一輪
+  // 手動點擊：飛機飛向點的位置並射一輪
   const manualFire = (clientX?: number, rect?: DOMRect | null) => {
     const g = game.current;
     if (g.finished) return;
     if (clientX != null && rect) {
       g.playerXTarget = clamp(((clientX - rect.left) / rect.width) * 100, 4, 96);
     }
-    const target = [...g.enemies].sort((a, b) => a.y - b.y)[0];
-    if (!target || !pilot) return;
-    fireSpread(target.id);
+    fireStraight();
     force();
   };
 
@@ -229,84 +265,98 @@ export function BattlePage() {
 
       // 結算
       if (g.playerHp <= 0) {
-        g.finished = true;
-        setResult('lose'); setPhase('result');
-        finishBattle('lose');
-        return;
+        g.finished = true; setResult('lose'); setPhase('result'); finishBattle('lose'); return;
       }
-      if (g.spawned >= g.total && g.enemies.length === 0) {
-        g.finished = true;
-        setResult('win'); setPhase('result');
-        finishBattle('win');
-        return;
+      if (g.enemies.length === 0) {
+        g.finished = true; setResult('win'); setPhase('result'); finishBattle('win'); return;
       }
 
       const frozen = now < g.freezeUntil;
+      const dmgReduce = Math.floor(pilot.stats.guard / 5);
 
-      // 飛機平滑移動到目標 x
+      // 飛機平滑移動
       if (Math.abs(g.playerX - g.playerXTarget) > 0.5) {
         g.playerX += (g.playerXTarget - g.playerX) * 0.18;
       } else {
         g.playerX = g.playerXTarget;
       }
 
-      // 生成敵機（越後面越強，每 4 架出一隻精英機）
-      if (g.spawned < g.total && now - g.lastSpawn > 1100) {
-        g.lastSpawn = now;
-        g.spawned += 1;
-        const tier = enemyTierOf(g.spawned);
-        const elite = g.spawned % 4 === 0;
-        const maxHp = 8 + Math.floor(Math.random() * 9) + tier * 4 + (elite ? 18 : 0);
-        g.enemies.push({
-          id: g.nextId++,
-          x: 12 + Math.random() * 76,
-          y: 4,
-          hp: maxHp, maxHp,
-          char: ENEMY_CHARS[Math.floor(Math.random() * ENEMY_CHARS.length)],
-          vy: 0.18 + Math.random() * 0.14 + tier * 0.04,
-          elite,
-          lastShot: now + 900 + Math.random() * 1200,
-        });
+      if (!frozen) {
+        // 方陣整體擺動 + 緩緩下壓
+        g.formationX += g.formationDir * SWAY_RATE;
+        if (g.formationX > SWAY_LIMIT) { g.formationX = SWAY_LIMIT; g.formationDir = -1; }
+        else if (g.formationX < -SWAY_LIMIT) { g.formationX = -SWAY_LIMIT; g.formationDir = 1; }
+        g.formationY += DESCEND_RATE;
+
+        // 更新每架敵機座標
+        let lowestY = 0;
+        for (const e of g.enemies) {
+          e.x = clamp(colX(e.col) + g.formationX, 2, 98);
+          e.y = baseRowY(e.row) + g.formationY;
+          if (e.y > lowestY) lowestY = e.y;
+        }
+        // 敵機壓到我頭上 → 直接落敗
+        if (lowestY >= LOSE_LINE) {
+          g.finished = true; setResult('lose'); setPhase('result'); finishBattle('lose'); return;
+        }
+
+        // 精英機向下反擊
+        const enemyBulletDmg = 7;
+        for (const e of g.enemies) {
+          if (e.elite && now > e.lastShot) {
+            e.lastShot = now + 1800 + Math.random() * 1400;
+            g.enemyBullets.push({ id: g.nextId++, x: e.x, y: e.y, dmg: enemyBulletDmg });
+          }
+        }
       }
 
-      // 自動開火（依子彈等級散射）
-      const interval = (now < g.fireBoostUntil ? 230 : 620 - pilot.stats.speed * 38);
+      // 自動開火（直上散射）
+      const interval = (now < g.fireBoostUntil ? 200 : 600 - pilot.stats.speed * 38);
       if (now - g.lastFire > interval) {
         g.lastFire = now;
-        const target = [...g.enemies].sort((a, b) => a.y - b.y)[0];
-        if (target) fireSpread(target.id);
+        fireStraight();
       }
 
       // 子彈移動 + 碰撞
-      const dmgReduce = Math.floor(pilot.stats.guard / 5);
       g.bullets = g.bullets.filter(b => {
-        const t = g.enemies.find(e => e.id === b.targetId);
-        if (!t) { b.y -= 4; return b.y > 0; }
-        const dx = t.x - b.x, dy = t.y - b.y;
-        const dist = Math.hypot(dx, dy);
-        if (dist < 5) {
-          t.hp -= b.dmg;
-          if (t.hp <= 0) { g.enemies = g.enemies.filter(e => e.id !== t.id); g.kills += 1; }
+        if (b.targetId >= 0) {
+          // 追蹤型（技能子彈）
+          const t = g.enemies.find(e => e.id === b.targetId);
+          if (!t) { b.y -= 7; return b.y > 0; }
+          const dx = t.x - b.x, dy = t.y - b.y;
+          const dist = Math.hypot(dx, dy);
+          if (dist < 5) {
+            t.hp -= b.dmg;
+            if (t.hp <= 0) { g.enemies = g.enemies.filter(e => e.id !== t.id); g.kills += 1; }
+            return false;
+          }
+          b.x += (dx / dist) * 7; b.y += (dy / dist) * 7;
+          return true;
+        }
+        // 直上型：命中同通道（x 接近）且在本格附近的敵機
+        b.y -= 7;
+        if (b.y < 0) return false;
+        let hit: Enemy | null = null, bestY = -999;
+        for (const e of g.enemies) {
+          if (Math.abs(e.x - b.x) < 3.6 && e.y <= b.y + 6 && e.y >= b.y - 3) {
+            if (e.y > bestY) { bestY = e.y; hit = e; }
+          }
+        }
+        if (hit) {
+          hit.hp -= b.dmg;
+          if (hit.hp <= 0) { g.enemies = g.enemies.filter(e => e.id !== hit!.id); g.kills += 1; }
           return false;
         }
-        b.x += (dx / dist) * 6;
-        b.y += (dy / dist) * 6;
         return true;
       });
 
-      // 敵機下移 + 精英機向下射擊
-      const enemyBulletDmg = 8 + Math.floor(g.spawned / 5);
-      if (!frozen) {
-        g.enemies = g.enemies.filter(e => {
-          e.y += e.vy;
-          // 精英機定期向玩家方向射出反擊彈
-          if (e.elite && now > e.lastShot) {
-            e.lastShot = now + 1500 + Math.random() * 1100;
-            g.enemyBullets.push({ id: g.nextId++, x: e.x, y: e.y, dmg: enemyBulletDmg });
-          }
-          if (e.y >= 86) {
-            const dmg = Math.max(6, 12 - dmgReduce);
-            if (now < g.invulnUntil) { /* 不受傷 */ }
+      // 敵方反擊彈下移
+      g.enemyBullets = g.enemyBullets.filter(eb => {
+        eb.y += 2.6;
+        if (eb.y >= 84) {
+          if (Math.abs(eb.x - g.playerX) < 7) {
+            const dmg = eb.dmg;
+            if (now < g.invulnUntil) { /* 免傷 */ }
             else if (g.playerShield > 0) {
               const absorbed = Math.min(g.playerShield, dmg);
               g.playerShield -= absorbed; setShieldView(g.playerShield);
@@ -314,27 +364,6 @@ export function BattlePage() {
               if (left > 0) g.playerHp = clamp(g.playerHp - left, 0, 100);
             } else {
               g.playerHp = clamp(g.playerHp - dmg, 0, 100);
-            }
-            setHpView(g.playerHp);
-            return false;
-          }
-          return true;
-        });
-      }
-
-      // 敵方反擊彈下移：到玩家機水平線時判定命中，可左右移動躲避
-      g.enemyBullets = g.enemyBullets.filter(eb => {
-        eb.y += 2.4;
-        if (eb.y >= 86) {
-          if (Math.abs(eb.x - g.playerX) < 7) {
-            if (now < g.invulnUntil) { /* 免傷 */ }
-            else if (g.playerShield > 0) {
-              const absorbed = Math.min(g.playerShield, eb.dmg);
-              g.playerShield -= absorbed; setShieldView(g.playerShield);
-              const left = eb.dmg - absorbed;
-              if (left > 0) g.playerHp = clamp(g.playerHp - left, 0, 100);
-            } else {
-              g.playerHp = clamp(g.playerHp - eb.dmg, 0, 100);
             }
             setHpView(g.playerHp);
           }
@@ -349,7 +378,7 @@ export function BattlePage() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [phase, pilot, studyBonus]);
 
-  // 鍵盤控制：左右鍵移動飛機，空白/下鍵集火
+  // 鍵盤控制
   useEffect(() => {
     if (phase !== 'play') return;
     const onKey = (e: KeyboardEvent) => {
@@ -364,7 +393,7 @@ export function BattlePage() {
 
   const finishBattle = (res: 'win' | 'lose') => {
     if (!pilot) return;
-    const coins = res === 'win' ? 20 + studyBonus : 5;
+    const coins = res === 'win' ? 30 + studyBonus : 5;
     const now = new Date();
     const record: BattleRecord = {
       id: `br-${Date.now()}`,
@@ -400,8 +429,8 @@ export function BattlePage() {
         <header className="card-leaf p-5 flex flex-col md:flex-row md:items-center gap-4">
           <div className="text-6xl">✈️</div>
           <div className="flex-1 min-w-0">
-            <h1 className="type-h1">飛機大戰 · 天空防衛戰 ✈️</h1>
-            <p className="type-body text-forest-700/90 mt-1">選擇你的貼紙飛行員，點畫面左右移動飛機、擊落來襲敵機！連續擊落會讓子彈升級（散射更多），後段還會出現會反擊的⭐精英機。今天完成 {doneTasks} 個任務，火力加成 +{studyBonus}。</p>
+            <h1 className="type-h1">飛機大戰 · 百機方陣 ✈️</h1>
+            <p className="type-body text-forest-700/90 mt-1">選擇你的貼紙飛行員，擊落天上 <b>100 台</b> 敵機方陣！方陣會整體緩緩下壓，別讓它壓到你頭上。點畫面左右移動飛機、連續擊落會讓子彈升級（散射更多）。今天完成 {doneTasks} 個任務，火力加成 +{studyBonus}。</p>
           </div>
           {battleRecords.length > 0 && (
             <button onClick={() => setShowRecords(!showRecords)} className="btn-ghost tap whitespace-nowrap">
@@ -469,13 +498,14 @@ export function BattlePage() {
   // ---- 對戰階段 ----
   if (phase === 'play' && pilot) {
     const g = game.current;
+    const remaining = g.enemies.length;
     return (
       <div className="container-forest pt-4">
         {/* 頂部狀態條 */}
         <div className="flex items-center gap-3 mb-3">
           <button onClick={() => { game.current.finished = true; setResult('lose'); setPhase('result'); finishBattle('lose'); }} className="btn-ghost tap text-sm">🚪 撤退</button>
           <div className="flex-1 text-center text-sm text-forest-600">
-            擊落 <span className="font-display font-bold text-forest-800">{g.kills}</span> / 剩餘敵機 <span className="font-display font-bold text-forest-800">{g.enemies.length + (g.total - g.spawned)}</span>
+            擊落 <span className="font-display font-bold text-forest-800">{g.kills}</span> / 剩餘敵機 <span className="font-display font-bold text-forest-800">{remaining}</span>
             <span className="ml-2 inline-block px-2 py-0.5 rounded-full bg-sun-400/20 text-soil-600 text-xs font-display font-bold">子彈 Lv.{bulletLevelOf(g.kills)}</span>
           </div>
           <button onClick={() => setShowRecords(false)} className="text-xs text-forest-400">✈️ 飛機大戰</button>
@@ -492,21 +522,25 @@ export function BattlePage() {
           style={{ touchAction: 'manipulation' }}
         >
           {/* 雲朵裝飾 */}
-          <div className="absolute top-6 left-6 text-3xl opacity-70">☁️</div>
-          <div className="absolute top-16 right-10 text-2xl opacity-60">☁️</div>
-          <div className="absolute top-32 left-1/3 text-2xl opacity-50">☁️</div>
+          <div className="absolute top-6 left-6 text-3xl opacity-70 pointer-events-none">☁️</div>
+          <div className="absolute top-16 right-10 text-2xl opacity-60 pointer-events-none">☁️</div>
+          <div className="absolute top-32 left-1/3 text-2xl opacity-50 pointer-events-none">☁️</div>
 
-          {/* 敵機 */}
+          {/* 危險線 */}
+          <div className="absolute inset-x-0 pointer-events-none" style={{ top: `${LOSE_LINE}%` }}>
+            <div className="border-t-2 border-dashed border-rose-400/70" />
+          </div>
+
+          {/* 敵機方陣 */}
           {g.enemies.map(e => (
             <div
               key={e.id}
               className="absolute -translate-x-1/2 -translate-y-1/2 flex flex-col items-center"
               style={{ left: `${e.x}%`, top: `${e.y}%` }}
             >
-              <div className="text-2xl drop-shadow">{e.elite ? '🛸' : '🛩️'}</div>
-              {e.elite && <div className="text-[10px] -mb-0.5">⭐</div>}
-              <div className="w-7"><Mascot name={e.char} size={28} withShadow={false} /></div>
-              <div className="w-10 h-1 mt-0.5 rounded-full bg-cream-200 overflow-hidden">
+              <div className="text-xl drop-shadow leading-none">{e.elite ? '🛸' : '🛩️'}</div>
+              {e.elite && <div className="text-[9px] -mb-0.5">⭐</div>}
+              <div className="w-7 h-1 mt-0.5 rounded-full bg-cream-200 overflow-hidden">
                 <div className="h-full bg-soil-500" style={{ width: `${(e.hp / e.maxHp) * 100}%` }} />
               </div>
             </div>
@@ -516,7 +550,7 @@ export function BattlePage() {
           {g.bullets.map(b => (
             <div
               key={b.id}
-              className="absolute -translate-x-1/2 -translate-y-1/2 w-2 h-2 rounded-full bg-sun-500 shadow"
+              className="absolute -translate-x-1/2 -translate-y-1/2 w-1.5 h-3 rounded-full bg-sun-500 shadow"
               style={{ left: `${b.x}%`, top: `${b.y}%` }}
             />
           ))}
@@ -572,16 +606,16 @@ export function BattlePage() {
 
   // ---- 結果階段 ----
   if (phase === 'result' && result && pilot) {
-    const coins = result === 'win' ? 20 + studyBonus : 5;
+    const coins = result === 'win' ? 30 + studyBonus : 5;
     return (
       <div className="container-forest pt-6 flex flex-col items-center">
         <div className={clsx('card-leaf p-8 text-center max-w-md w-full animate-pop', result === 'win' && 'ring-4 ring-sun-400/50')}>
           <div className="text-6xl mb-3">{result === 'win' ? '🏆' : '💪'}</div>
           <h1 className={clsx('type-h1', result === 'win' ? 'text-sun-600' : 'text-forest-700')}>
-            {result === 'win' ? '任務達成！' : '再接再厲！'}
+            {result === 'win' ? '百機全滅！' : '方陣壓境…'}
           </h1>
           <p className="type-body text-forest-700 mt-2">
-            {pilot.name} {result === 'win' ? '擊落了所有' : '不敵'} {enemyName} 敵機
+            {pilot.name} {result === 'win' ? '成功擊落了全部 100 台' : '不敵'} {enemyName} 敵機方陣
           </p>
           <div className="mt-2 text-sm text-forest-600">本次擊落 <span className="font-display font-bold text-forest-800">{game.current.kills}</span> 架</div>
           <div className="mt-4 inline-flex items-center gap-2 px-4 py-2 rounded-barn bg-sun-400/20">
