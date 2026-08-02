@@ -5,7 +5,7 @@ import { LearningStage } from '@/components/lesson/LearningStage';
 import { AudioPlayer } from '@/components/ui/AudioPlayer';
 import { VoiceRecorder } from '@/components/ui/VoiceRecorder';
 import { TracingCanvas } from '@/components/ui/TracingCanvas';
-import { speak, speakAuto, stopSpeaking, isEnglish, isChinese, isSpeakable, toSpokenText } from '@/lib/speech';
+import { speak, speakAuto, speakSequence, stopSpeaking, isEnglish, isChinese, isSpeakable, toSpokenText } from '@/lib/speech';
 
 interface Props {
   lesson: Lesson;
@@ -525,10 +525,21 @@ function extractEnglishPhrases(text: string): string[] {
 function AnswerView({ step, onContinue }: { step: LessonStep; onContinue: () => void }) {
   let answerText = '';
   let speakText = '';
+  // 选择题专用：自动 + 手动朗读时，依次读出所有选项 + 正确答案
+  const allSpeakTexts: string[] = [];
   switch (step.ui) {
     case 'tap_choice':
       answerText = String(step.answer);
       speakText = isSpeakable(answerText) ? answerText : '';
+      // 把所有选项（可读的英文/中文）依次加入朗读队列
+      if (Array.isArray(step.choices)) {
+        for (const c of step.choices) {
+          const s = String(c);
+          if (isSpeakable(s)) allSpeakTexts.push(s);
+        }
+        // 正确答案在最后单独念一遍，强化记忆
+        if (speakText && !allSpeakTexts.includes(speakText)) allSpeakTexts.push(speakText);
+      }
       break;
     case 'blend': {
       const a = Array.isArray(step.answer) ? step.answer.join('') : String(step.answer);
@@ -555,8 +566,10 @@ function AnswerView({ step, onContinue }: { step: LessonStep; onContinue: () => 
       speakText = isSpeakable(answerText) ? answerText : '';
   }
   useEffect(() => {
-    if (speakText) {
-      const t = setTimeout(() => speakAuto(speakText), 300);
+    // 进入「看答案」自动朗读：选择题把所有选项念完 + 正确答案；其他题只念答案
+    const queue = allSpeakTexts.length ? allSpeakTexts : (speakText ? [speakText] : []);
+    if (queue.length) {
+      const t = setTimeout(() => speakSequence(queue), 300);
       return () => { clearTimeout(t); stopSpeaking(); };
     }
   }, []);
@@ -565,7 +578,7 @@ function AnswerView({ step, onContinue }: { step: LessonStep; onContinue: () => 
       <div className="type-meta text-forest-600 mb-2">📖 正确答案</div>
       <div className="font-display font-extrabold text-2xl md:text-3xl text-forest-800 mb-3 break-words">{answerText}</div>
       {speakText && (
-        <button onClick={() => speakAuto(speakText)} className="btn-secondary tap inline-flex items-center gap-2 mb-3" aria-label="听答案发音">
+        <button onClick={() => speakSequence(allSpeakTexts.length ? allSpeakTexts : [speakText])} className="btn-secondary tap inline-flex items-center gap-2 mb-3" aria-label="听答案发音">
           <span className="text-xl">🔊</span> 听一听
         </button>
       )}

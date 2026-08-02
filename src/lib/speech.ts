@@ -62,6 +62,49 @@ export function stopSpeaking() {
   }
 }
 
+/**
+ * 顺序朗读多段文字（用 onend 串接，避免 cancel 阻断）。
+ * 适用于「看答案」面板：先逐个念出 4 个选项，再念正确答案。
+ * 自动判别每段语种并用 speakAuto。
+ * 传一个空数组等价于 stopSpeaking。
+ */
+export function speakSequence(texts: string[], gapMs = 220) {
+  if (typeof window === 'undefined' || !('speechSynthesis' in window)) return;
+  if (!texts.length) { stopSpeaking(); return; }
+  stopSpeaking();
+  // 用串行 setTimeout 替代 onend —— 某些浏览器 (Safari) 的 onend 偶发不触发
+  const delayFor = (t: string) => {
+    if (isChinese(t)) return 80 * Math.max(1, t.length) + gapMs;
+    if (isEnglish(t)) return 120 * Math.max(1, t.length) + gapMs;
+    return 80 * Math.max(1, t.length) + gapMs;
+  };
+  const queue = texts.slice();
+  const play = () => {
+    const cur = queue.shift();
+    if (!cur) return;
+    const u = new SpeechSynthesisUtterance(cur);
+    // 同样走 speakAuto 的语速/音调策略
+    if (isChinese(cur)) {
+      u.lang = 'zh-TW'; u.rate = 0.7; u.pitch = 1.0;
+    } else if (isEnglish(cur)) {
+      const isSentence = /\s/.test(cur.trim());
+      u.lang = 'en-US'; u.rate = isSentence ? SENTENCE_RATE : WORD_RATE; u.pitch = 1.1;
+    } else {
+      u.lang = 'en-US'; u.rate = 0.8; u.pitch = 1.0;
+    }
+    const v = pickVoice(u.lang);
+    if (v) u.voice = v;
+    u.onend = () => {
+      if (queue.length) setTimeout(play, gapMs);
+    };
+    u.onerror = () => {
+      if (queue.length) setTimeout(play, gapMs);
+    };
+    window.speechSynthesis.speak(u);
+  };
+  setTimeout(play, 80);
+}
+
 /** 检测浏览器是否支持 TTS */
 export function isSpeechSupported(): boolean {
   return typeof window !== 'undefined' && 'speechSynthesis' in window;
