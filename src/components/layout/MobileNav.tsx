@@ -1,0 +1,39 @@
+import { NavLink } from 'react-router-dom';
+import clsx from 'clsx';
+
+const items = [
+  { to: '/',         label: '首页',     emoji: '🏡', end: true },
+  { to: '/english',  label: '英语',     emoji: '🔤' },
+  { to: '/math',     label: '数学',     emoji: '🥕' },
+  { to: '/chinese',  label: '语文',     emoji: '📚' },
+  { to: '/roadmap',  label: '路线图',   emoji: '📅' },
+  { to: '/board',    label: '棋盘',     emoji: '🗺️' },
+  { to: '/album',    label: '图鉴',     emoji: '📒' },
+];
+
+export function MobileNav() {
+  return (
+    <nav
+      className="md:hidden fixed bottom-0 inset-x-0 z-40 bg-cream-50/95 backdrop-blur
+                 border-t border-forest-100 px-1 pt-1.5 pb-[max(8px,env(safe-area-inset-bottom))]"
+      aria-label="底部导航"
+    >
+      <div className="grid grid-cols-7">
+        {items.map(i => (
+          <NavLink
+            key={i.to}
+            to={i.to}
+            end={i.end}
+            className={({ isActive }) => clsx(
+              'flex flex-col items-center justify-center gap-0.5 py-2 rounded-barn text-xs tap',
+              isActive ? 'text-forest-800 font-bold' : 'text-forest-600',
+            )}
+          >
+            <span className="text-xl leading-none" aria-hidden>{i.emoji}</span>
+            <span className="text-[10px] leading-tight">{i.label}</span>
+          </NavLink>
+        ))}
+      </div>
+    </nav>
+  );
+}

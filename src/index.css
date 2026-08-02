@@ -1,0 +1,133 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    -webkit-text-size-adjust: 100%;
+    -webkit-tap-highlight-color: transparent;
+  }
+  body {
+    @apply text-forest-800 font-body;
+    background-color: #F5F0E1; /* 兜底色：背景图未加载时显示 */
+    background-image: none; /* 让 AppShell 的 picture 背景图全屏显示 */
+    min-height: 100vh;
+    min-height: 100dvh;
+  }
+  /* Reduce motion: respect user preference */
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+  /* iPad / iOS: avoid horizontal overscroll */
+  html, body { overscroll-behavior-x: none; }
+  /* Bigger readable type for kids on iPad */
+  .type-display { @apply font-display font-bold tracking-tight; }
+  .type-h1 { @apply font-display font-bold text-3xl md:text-4xl; letter-spacing: -0.01em; }
+  .type-h2 { @apply font-display font-bold text-2xl md:text-3xl; letter-spacing: -0.01em; }
+  .type-h3 { @apply font-display font-semibold text-xl md:text-2xl; }
+  .type-body { @apply text-base md:text-lg leading-relaxed; }
+  .type-meta { @apply text-sm text-forest-600/80; }
+  /* Tap targets ≥ 44px */
+  .tap { min-height: 44px; min-width: 44px; }
+  /* Custom focus ring */
+  *:focus-visible {
+    outline: 3px solid #E0A92E;
+    outline-offset: 2px;
+    border-radius: 8px;
+  }
+}
+
+@layer components {
+  /* Primary CTA — only ONE per page, dark forest */
+  .btn-primary {
+    @apply inline-flex items-center justify-center gap-2 px-6 py-3 rounded-barn
+           bg-forest-800 text-cream-50 font-display font-bold text-lg tap
+           shadow-soft hover:bg-forest-700 active:translate-y-0.5 transition;
+  }
+  .btn-primary-lg {
+    @apply inline-flex items-center justify-center gap-3 px-8 py-4 rounded-barn
+           bg-forest-800 text-cream-50 font-display font-bold text-xl tap
+           shadow-lift hover:bg-forest-700 active:translate-y-0.5 transition;
+  }
+  .btn-secondary {
+    @apply inline-flex items-center justify-center gap-2 px-5 py-3 rounded-barn
+           bg-cream-50 text-forest-800 font-display font-semibold tap
+           ring-1 ring-forest-200 hover:bg-forest-50 transition;
+  }
+  .btn-ghost {
+    @apply inline-flex items-center justify-center gap-2 px-4 py-2 rounded-barn
+           text-forest-700 font-display font-semibold tap
+           hover:bg-forest-50 transition;
+  }
+
+  .card {
+    @apply bg-cream-50 rounded-pebble shadow-soft ring-1 ring-forest-100;
+  }
+  .card-leaf {
+    @apply bg-forest-50 rounded-leaf shadow-soft;
+  }
+  .card-barn {
+    @apply bg-cream-50 rounded-barn shadow-soft ring-1 ring-forest-100;
+  }
+
+  .pill {
+    @apply inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full
+           bg-forest-50 text-forest-700 text-sm font-semibold ring-1 ring-forest-200;
+  }
+  .pill-sun { @apply bg-sun-400/15 text-soil-500 ring-sun-400/30; }
+  .pill-sky { @apply bg-sky-400/15 text-sky-500 ring-sky-400/30; }
+
+  .progress-track {
+    @apply h-3 rounded-full bg-forest-100 overflow-hidden;
+  }
+  .progress-fill {
+    @apply h-full bg-forest-500 rounded-full origin-left animate-grow;
+  }
+
+  /* Forest board cell */
+  .cell {
+    @apply rounded-barn flex flex-col items-center justify-center text-center
+           ring-1 ring-forest-200 bg-cream-50 select-none cursor-pointer tap
+           transition hover:scale-[1.03] hover:shadow-soft;
+  }
+  .cell-done { @apply bg-forest-500 text-cream-50 ring-forest-600; }
+  .cell-current { @apply bg-sun-400 text-forest-900 ring-sun-500 shadow-lift; }
+  .cell-locked { @apply bg-cream-200/60 text-forest-400/70 ring-cream-300 cursor-not-allowed; }
+  .cell-event { @apply bg-cream-300 text-forest-800 ring-cream-300; }
+  .cell-reward { @apply bg-sun-400/30 text-forest-900 ring-sun-400/40; }
+
+  .nav-item {
+    @apply flex items-center gap-3 px-4 py-3 rounded-barn tap
+           text-forest-700 font-display font-semibold transition;
+  }
+  .nav-item-active { @apply bg-forest-700 text-cream-50 shadow-soft; }
+  .nav-item:hover:not(.nav-item-active) { @apply bg-forest-50; }
+
+  .container-forest {
+    @apply max-w-[1280px] mx-auto px-4 md:px-8;
+  }
+}
+
+@layer utilities {
+  .scrollbar-none::-webkit-scrollbar { display: none; }
+  .scrollbar-none { scrollbar-width: none; }
+  .text-shadow-leaf { text-shadow: 0 1px 0 rgba(255,255,255,0.5); }
+}
+
+/* 动画关键帧（路线图弹窗 / 背景淡入） */
+@keyframes bgIn { from { opacity: 0; transform: scale(1.04); } to { opacity: 1; transform: scale(1); } }
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+@keyframes slideUp { from { opacity: 0; transform: translateY(24px); } to { opacity: 1; transform: translateY(0); } }
+
+/* 大富翁小鹿棋子：每走一格重播一次弹跳（key={pos} 触发） */
+@keyframes pawn-hop {
+  0%   { transform: translateY(0) scale(1); }
+  30%  { transform: translateY(-38%) scale(1.14); }
+  65%  { transform: translateY(0) scale(.94); }
+  100% { transform: translateY(0) scale(1); }
+}
+.pawn-hop { animation: pawn-hop .42s ease; }
