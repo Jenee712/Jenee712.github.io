@@ -1,10 +1,15 @@
+import { useNavigate } from 'react-router-dom';
 import { useAppStore } from '@/store/useAppStore';
+import { gradeDef } from '@/data/grades';
 
 /** Top progress bar — daily plan completion percentage. */
 export function TopBar() {
+  const navigate = useNavigate();
   const kid = useAppStore(s => s.kid);
+  const grade = useAppStore(s => s.grade);
   const pct = Math.min(100, Math.round((kid.todayMinutes / Math.max(1, kid.todayGoalMin)) * 100));
   const lessonPct = Math.round((kid.todayLessonsDone / Math.max(1, kid.todayLessonsGoal)) * 100);
+  const gdef = gradeDef(grade);
   return (
     <header
       className="sticky top-0 z-30 bg-cream-50/85 backdrop-blur border-b border-forest-100"
@@ -32,6 +37,14 @@ export function TopBar() {
         </div>
 
         <div className="hidden sm:flex items-center gap-2">
+          <button
+            onClick={() => navigate('/')}
+            className="pill pill-forest tap"
+            title="切換年級"
+            aria-label={`目前年級：${gdef.fullLabel}，點擊回首頁切換`}
+          >
+            <span aria-hidden>{gdef.emoji}</span><span>{gdef.label}</span>
+          </button>
           <div className="pill pill-sun" title="金币">
             <span aria-hidden>🪙</span><span>{kid.coins}</span>
           </div>

@@ -1,6 +1,6 @@
 import { useNavigate, useParams } from 'react-router-dom';
 import { LessonPlayer } from '@/components/widgets/LessonPlayer';
-import { getMathLesson, mathUnits } from '@/data/curriculum';
+import { getMathLesson, mathUnits } from '@/data/gradeContent';
 import { useAppStore } from '@/store/useAppStore';
 
 export function MathLessonPage() {

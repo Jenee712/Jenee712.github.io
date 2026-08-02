@@ -2,7 +2,8 @@ import { useNavigate } from 'react-router-dom';
 import { useAppStore } from '@/store/useAppStore';
 import { Mascot } from '@/components/characters/Mascot';
 import { EnglishSkillPath } from '@/components/lesson/EnglishSkillPath';
-import { englishUnits, englishContinue, getEnglishLesson } from '@/data/curriculum';
+import { englishUnits, englishContinue, getEnglishLesson } from '@/data/gradeContent';
+import { gradeDef } from '@/data/grades';
 import { dayOfSummer } from '@/data/plan60';
 
 export function EnglishPage() {
@@ -12,8 +13,10 @@ export function EnglishPage() {
   const skillProgress = useAppStore(s => s.skillProgress);
   const difficulty = useAppStore(s => s.parent.difficulty);
   const studyDay = useAppStore(s => s.studyDay);
+  const grade = useAppStore(s => s.grade);
   const realToday = dayOfSummer();
   const resetStudyDay = useAppStore(s => s.resetStudyDay);
+  const def = gradeDef(grade);
 
   const todayEngMin = tasks.filter(t => t.subject === 'english' && t.done).reduce((a, b) => a + b.durationMin, 0);
   const todayEngGoal = Math.round(kid.todayGoalMin * 0.7);
@@ -31,7 +34,7 @@ export function EnglishPage() {
         </div>
       )}
       <UnitHeader
-        title="森林英语营 🌿"
+        title={`${def.label} · 森林英語營`}
         story={current.storyTask}
         today={`今日 ${todayEngMin} / ${todayEngGoal} 分钟`}
         mascot="deer"
@@ -58,7 +61,7 @@ export function EnglishPage() {
       {/* 六类稳定技能航线（掌握度） */}
       <section className="mt-6" aria-labelledby="skill-route">
         <div className="flex items-end justify-between">
-          <h2 id="skill-route" className="type-h2">P1A 技能航线</h2>
+          <h2 id="skill-route" className="type-h2">{def.label} · 技能航線</h2>
           <span className="pill">6 类稳定结构 · 主题随单元更换</span>
         </div>
         <div className="mt-4">
@@ -85,7 +88,7 @@ export function EnglishPage() {
 
             <div className="mt-4 flex items-center gap-3">
               {difficulty === 'challenge'
-                ? <span className="card-leaf px-4 py-3 text-forest-700">二年级挑战 · 辅音簇 / 字母组合 / 阅读与口语</span>
+                ? <span className="card-leaf px-4 py-3 text-forest-700">{def.fullLabel} · {def.tagline}</span>
                 : (['s', 'u', 'n'] as const).map((l, i) => (
                   <div key={l} className="flex items-center gap-3">
                     <div className="w-20 h-20 md:w-24 md:h-24 rounded-barn bg-cream-200 ring-1 ring-forest-200 flex flex-col items-center justify-center">

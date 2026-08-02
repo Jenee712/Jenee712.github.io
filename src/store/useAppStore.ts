@@ -9,6 +9,8 @@ import {
   initialKid, initialParent,
 } from '@/data/user';
 import { generateDailyPlan } from '@/data/curriculum';
+import { GradeKey, DEFAULT_GRADE, isGradeKey } from '@/data/grades';
+import { refreshGrade } from '@/data/gradeContent';
 import { getDayPlan, dayOfSummer, PLAN_TOTAL_DAYS } from '@/data/plan60';
 import { boardCells, initialStickers } from '@/data/board';
 import { monoCells, drawMonoCard, MONO_COLOR_GROUPS, type MonoCardDef } from '@/data/monopoly';
@@ -35,6 +37,17 @@ function loadStudyDay(): number {
 }
 function saveStudyDay(d: number) {
   try { if (typeof localStorage !== 'undefined') localStorage.setItem(STUDY_DAY_KEY, String(d)); } catch { /* ignore */ }
+}
+const GRADE_KEY = 'ff_grade_v1';
+function loadGrade(): GradeKey {
+  try {
+    const v = typeof localStorage !== 'undefined' ? localStorage.getItem(GRADE_KEY) : null;
+    if (v && isGradeKey(v)) return v;
+  } catch { /* ignore */ }
+  return DEFAULT_GRADE;
+}
+function saveGrade(g: GradeKey) {
+  try { if (typeof localStorage !== 'undefined') localStorage.setItem(GRADE_KEY, g); } catch { /* ignore */ }
 }
 const regenTasks = (day: number): TodayTask[] => {
   const weak = api.getWeakLessons ? api.getWeakLessons() : [];
@@ -64,6 +77,8 @@ interface State {
   battleRecords: BattleRecord[];
   completedDays: number[];
   studyDay: number;
+  grade: GradeKey;
+  setGrade: (g: GradeKey) => void;
   setStudyDay: (day: number) => void;
   resetStudyDay: () => void;
   markDayDone: (day: number) => Promise<void>;
@@ -168,12 +183,16 @@ export const useAppStore = create<State>((set, get) => {
     });
   }
 
+  // 依持久化年級同步內容層（G1 原樣；其餘級載入佔位內容）
+  refreshGrade(loadGrade());
+
   return {
     kid: { ...initialKid },
     parent: { ...initialParent },
     tasks: regenTasks(loadStudyDay()),
     completedDays: api.getCompletedDays(),
     studyDay: loadStudyDay(),
+    grade: loadGrade(),
     board: [...boardCells],
     boardEvents: [...seedBoardEvents],
     stickers: [...initialStickers],
@@ -194,6 +213,13 @@ export const useAppStore = create<State>((set, get) => {
 
     addBattleRecord(r) {
       set((s) => ({ battleRecords: [r, ...s.battleRecords].slice(0, 50) }));
+    },
+
+    // ------- 年級切換（7 套學習工作台的核心開關）-------
+    setGrade(grade) {
+      set({ grade });
+      refreshGrade(grade);
+      saveGrade(grade);
     },
 
     // ------- 大富翁（森林棋盘 80% 重做）-------

@@ -1,7 +1,8 @@
 import { useNavigate } from 'react-router-dom';
 import { Mascot } from '@/components/characters/Mascot';
 import { MathKnowledgeMap } from '@/components/lesson/MathKnowledgeMap';
-import { mathContinue, getMathLesson, mathUnits } from '@/data/curriculum';
+import { mathContinue, getMathLesson, mathUnits } from '@/data/gradeContent';
+import { gradeDef } from '@/data/grades';
 import { useAppStore } from '@/store/useAppStore';
 
 export function MathPage() {
@@ -10,6 +11,8 @@ export function MathPage() {
   const tasks = useAppStore(s => s.tasks);
   const skillProgress = useAppStore(s => s.skillProgress);
   const difficulty = useAppStore(s => s.parent.difficulty);
+  const grade = useAppStore(s => s.grade);
+  const def = gradeDef(grade);
 
   const todayMathMin = tasks.filter(t => t.subject === 'math' && t.done).reduce((a, b) => a + b.durationMin, 0);
   const todayMathGoal = Math.round(kid.todayGoalMin * 0.3);
@@ -22,7 +25,7 @@ export function MathPage() {
   return (
     <div className="container-forest pt-6">
       <UnitHeader
-        title="田园数学站 🌱"
+        title={`${def.label} · 田園數學站`}
         story={current.storyTask}
         today={`今日 ${todayMathMin} / ${todayMathGoal} 分钟`}
         mascot="bear"
@@ -31,7 +34,7 @@ export function MathPage() {
       {/* 六类知识地图（固定站点 + 掌握度） */}
       <section className="mt-6" aria-labelledby="math-map">
         <div className="flex items-end justify-between">
-          <h2 id="math-map" className="type-h2">P1A 知识地图</h2>
+          <h2 id="math-map" className="type-h2">{def.label} · 知識地圖</h2>
           <span className="pill">数 → 加减 → 形状 → 比较 → 时钟 → 图表</span>
         </div>
         <div className="mt-4">
