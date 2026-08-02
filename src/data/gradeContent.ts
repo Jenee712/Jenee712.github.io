@@ -286,16 +286,14 @@ export function getCurrentGrade(): GradeKey {
 }
 
 // ----------------------------------------------------------------- 對外函式（簽名與 curriculum 一致）
-export function getEnglishLesson(id: string, difficulty: 'easy' | 'normal' | 'challenge'): Lesson | undefined {
-  if (currentGrade === 'G1') return curGetEnglishLesson(id, difficulty);
-  const found = getEngLessons(currentGrade).find((l) => l.id === id);
-  return found ?? englishContinue(difficulty);
+export function getEnglishLesson(id: string, difficulty: 'easy' | 'normal' | 'challenge'): Lesson {
+  if (currentGrade === 'G1') return curGetEnglishLesson(id, difficulty) ?? curEnglishContinue(difficulty);
+  return getEngLessons(currentGrade).find((l) => l.id === id) ?? englishContinue(difficulty);
 }
 
-export function getMathLesson(id: string, difficulty: 'easy' | 'normal' | 'challenge'): Lesson | undefined {
-  if (currentGrade === 'G1') return curGetMathLesson(id, difficulty);
-  const found = getMathLessons(currentGrade).find((l) => l.id === id);
-  return found ?? mathContinue(difficulty);
+export function getMathLesson(id: string, difficulty: 'easy' | 'normal' | 'challenge'): Lesson {
+  if (currentGrade === 'G1') return curGetMathLesson(id, difficulty) ?? curMathContinue(difficulty);
+  return getMathLessons(currentGrade).find((l) => l.id === id) ?? mathContinue(difficulty);
 }
 
 export function englishContinue(difficulty: 'easy' | 'normal' | 'challenge'): Lesson {
