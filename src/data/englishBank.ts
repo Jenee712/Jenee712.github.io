@@ -156,7 +156,7 @@ const SENT: { id: string; title: string; en: string; cn: string; blank: { positi
   { id: 'ican',   title: 'I can …',   en: 'I can run',     cn: '我會跑',
     blank: { position: 2, answer: 'run',    choices: ['run', 'swim', 'sing', 'jump'] } },
   { id: 'ilike',  title: 'I like …',  en: 'I like the sun', cn: '我喜歡太陽',
-    blank: { position: 2, answer: 'like',   choices: ['like', 'see', 'have', 'go'] } },
+    blank: { position: 2, answer: 'the',   choices: ['the', 'my', 'a', 'cat'] } },
   { id: 'isee',   title: 'I see …',   en: 'I see a cow',    cn: '我看見一頭牛',
     blank: { position: 1, answer: 'see',    choices: ['see', 'am', 'have', 'like'] } },
   { id: 'thisis', title: 'This is …', en: 'This is my book', cn: '這是我的書',
