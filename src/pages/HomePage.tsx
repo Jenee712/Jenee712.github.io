@@ -8,6 +8,7 @@ import { DailyTaskList } from '@/components/ui/DailyTaskList';
 import { ContinueLearningButton } from '@/components/ui/ContinueLearningButton';
 import { StretchReminder } from '@/components/ui/StretchReminder';
 import { AnimalSticker } from '@/components/stickers/AnimalSticker';
+import { GradePicker } from '@/components/GradePicker';
 import { Leaf, Berry } from '@/components/decor/ForestDecor';
 import { dayOfSummer } from '@/data/plan60';
 
@@ -89,6 +90,8 @@ export function HomePage() {
       <div className="mt-4">
         <button onClick={() => navigate('/roadmap')} className="btn-leaf tap w-full sm:w-auto">🗺 查看 60 天路线图 · 已完成 {completedDays.length} / 60 天</button>
       </div>
+
+      <GradePicker />
 
       {studyDay !== realToday && (
         <div className="mt-3 card-leaf px-4 py-3 flex items-center justify-between gap-3">
