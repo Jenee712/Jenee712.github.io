@@ -1,20 +1,11 @@
 import { useState } from 'react';
+import { speakAuto, stopSpeaking } from '@/lib/speech';
 
 const LETTERS = [
   { letter: 'A', lower: 'a', word: 'apple', cn: '苹果', image: 'a-apple.png', tone: 'letter-card-apple' },
   { letter: 'B', lower: 'b', word: 'bear', cn: '小熊', image: 'b-bear.png', tone: 'letter-card-bear' },
   { letter: 'C', lower: 'c', word: 'cat', cn: '小猫', image: 'c-cat.png', tone: 'letter-card-cat' },
 ] as const;
-
-function speak(text: string) {
-  if (!('speechSynthesis' in window)) return;
-  window.speechSynthesis.cancel();
-  const utterance = new SpeechSynthesisUtterance(text);
-  utterance.lang = 'en-US';
-  utterance.rate = 0.72;
-  utterance.pitch = 1.12;
-  window.speechSynthesis.speak(utterance);
-}
 
 export function AlphabetStarter({ compact = false }: { compact?: boolean }) {
   const base = import.meta.env.BASE_URL;
@@ -37,7 +28,11 @@ export function AlphabetStarter({ compact = false }: { compact?: boolean }) {
             type="button"
             key={item.letter}
             className={`letter-card ${item.tone} ${active === item.letter ? 'letter-card-active' : ''}`}
-            onClick={() => { setActive(item.letter); speak(`${item.letter}. ${item.word}.`); }}
+            onClick={() => {
+              setActive(item.letter);
+              stopSpeaking();
+              speakAuto(`${item.letter}, ${item.word}.`);
+            }}
             aria-label={`点击听 ${item.letter}，${item.word}`}
           >
             <span className="letter-pair"><b>{item.letter}</b><small>{item.lower}</small></span>

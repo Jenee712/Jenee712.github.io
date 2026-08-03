@@ -1,5 +1,10 @@
 {
-  "A": "/audio/7fc56270e7a70fa81a5935b72eacbe29.mp3",
+  "A": "/audio/baidu-abc-a.mp3",
+  "B": "/audio/baidu-abc-b.mp3",
+  "C": "/audio/baidu-abc-c.mp3",
+  "A, apple.": "/audio/baidu-a-apple.mp3",
+  "B, bear.": "/audio/baidu-b-bear.mp3",
+  "C, cat.": "/audio/baidu-c-cat.mp3",
   "A bird sings a song.": "/audio/e5d912db6cf48c055bdf48964fbcfd50.mp3",
   "A dog and a cat. The dog is small. The cat is big.": "/audio/f3c09de0908d8cb89c2b631bab00640c.mp3",
   "Ben": "/audio/092f2ba9f39fbc2876e64d12cd662f72.mp3",
