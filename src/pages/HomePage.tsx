@@ -89,6 +89,8 @@ export function HomePage() {
         <div className="rail-line" aria-hidden><span className="little-train">🚂</span></div>
       </section>
 
+      <GradePicker />
+
       <section className="journey-card mt-5" aria-labelledby="next-task-heading">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <div>
@@ -128,8 +130,6 @@ export function HomePage() {
           {studyDay !== realToday && <button className="text-link" onClick={resetStudyDay}>回到真实今天（第 {realToday} 天）</button>}
         </div>
       </section>
-
-      <GradePicker />
 
       <div className="mt-5 grid gap-4 lg:grid-cols-[minmax(0,1fr)_340px]">
         <details className="card overflow-hidden group">

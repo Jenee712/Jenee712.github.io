@@ -4,6 +4,7 @@ import { MobileNav } from './MobileNav';
 import { TopBar } from './TopBar';
 import { useEffect, useMemo } from 'react';
 import { Butterfly, Cloud, Flower, GrassTuft, Leaf, Tree } from '@/components/decor/ForestDecor';
+import { BackgroundMusic } from '@/components/ui/BackgroundMusic';
 
 /** 游戏/对战类路由用更明亮的羊群油画背景；其他学习类路由用温柔的兔子水彩背景 */
 function pickBackground(pathname: string): 'meadow' | 'field' {
@@ -68,6 +69,7 @@ export function AppShell() {
         </main>
       </div>
       {!isFocusMode && <MobileNav />}
+      <BackgroundMusic />
     </div>
   );
 }
