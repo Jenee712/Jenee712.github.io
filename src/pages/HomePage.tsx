@@ -106,6 +106,9 @@ export function HomePage() {
           <StickerCrop sheet="birthday" position="7% 4%" label="生日小熊贴纸" />
           <StickerCrop sheet="pink" position="50% 82%" label="粉色小兔贴纸" />
           <StickerCrop sheet="snack" position="40% 18%" label="冰淇淋贴纸" />
+          <StickerCrop sheet="spring" position="63% 50%" label="蓝色蝴蝶贴纸" />
+          <StickerCrop sheet="autumnCozy" position="68% 88%" label="秋日刺猬贴纸" />
+          <StickerCrop sheet="kindWords" position="67% 40%" label="微笑爱心贴纸" />
         </div>
         <button className="sticker-album-link" onClick={() => navigate('/album?tab=stickers')}>打开贴纸册 <span aria-hidden>→</span></button>
       </section>

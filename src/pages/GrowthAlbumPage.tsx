@@ -6,6 +6,7 @@ import { KnowledgeCollection } from '@/components/ui/KnowledgeCollection';
 import { StickerAlbum } from '@/components/stickers/StickerAlbum';
 import { PortfolioCard } from '@/components/ui/PortfolioCard';
 import { useSearchParams } from 'react-router-dom';
+import { DesignStickerShop } from '@/components/stickers/DesignStickerShop';
 
 type Tab = 'knowledge' | 'stickers' | 'works' | 'milestones';
 
@@ -59,6 +60,7 @@ export function GrowthAlbumPage() {
         {tab === 'knowledge' && <KnowledgeCollection collection={knowledge} />}
         {tab === 'stickers' && (
           <div className="space-y-5">
+            <DesignStickerShop />
             <SuppliedStickerCollection />
             <section>
               <h2 className="type-h2 mb-3">森林动物贴纸</h2>
@@ -89,9 +91,9 @@ function SuppliedStickerCollection() {
   return (
     <section className="supplied-sticker-album" aria-labelledby="supplied-stickers-heading">
       <div>
-        <span className="sticker-kicker">NEW · 你上传的贴纸</span>
-        <h2 id="supplied-stickers-heading" className="mt-2 type-h2">小易设计贴纸</h2>
-        <p className="mt-1 text-sm text-forest-600">四套原始贴纸已经完整放入贴纸册，点击图片可以查看大图。</p>
+        <span className="sticker-kicker">保留 · 第一轮贴纸</span>
+        <h2 id="supplied-stickers-heading" className="mt-2 type-h2">第一轮小易设计贴纸</h2>
+        <p className="mt-1 text-sm text-forest-600">之前加入的四套原始贴纸完整保留，点击图片可以查看大图。</p>
       </div>
       <div className="mt-4 grid gap-4 sm:grid-cols-2">
         {sheets.map((sheet) => {

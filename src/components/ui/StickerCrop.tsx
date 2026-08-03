@@ -1,12 +1,22 @@
 import type { CSSProperties } from 'react';
 
-type StickerSheet = 'garden' | 'birthday' | 'pink' | 'snack';
+export type StickerSheet =
+  | 'garden' | 'birthday' | 'pink' | 'snack'
+  | 'autumnCozy' | 'autumnBotany' | 'chocolate' | 'kindWords'
+  | 'spring' | 'breakfast' | 'happyDay';
 
 const SHEETS: Record<StickerSheet, string> = {
   garden: 'garden-friends.jpg',
   birthday: 'birthday-party.jpg',
   pink: 'pink-buddies.jpg',
   snack: 'snack-time.jpg',
+  autumnCozy: 'autumn-cozy.jpg',
+  autumnBotany: 'autumn-botany.jpg',
+  chocolate: 'chocolate-friends.jpg',
+  kindWords: 'kind-words.jpg',
+  spring: 'spring-friends.jpg',
+  breakfast: 'breakfast-friends.jpg',
+  happyDay: 'happy-day.jpg',
 };
 
 interface StickerCropProps {

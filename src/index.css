@@ -183,6 +183,26 @@
   .supplied-sticker-card strong { @apply block font-display text-lg text-forest-800; }
   .supplied-sticker-card small { @apply mt-0.5 block text-sm text-forest-500; }
   .supplied-sticker-card > b { @apply absolute right-4 top-4 rounded-full bg-white/90 px-2 py-1 text-xs text-[#a6456d] shadow-sm; }
+  .design-sticker-shop { @apply overflow-hidden rounded-[28px] bg-cream-50/95 p-5 shadow-lift ring-2 ring-sun-400/50 sm:p-6; }
+  .design-coin-balance { @apply inline-flex min-h-11 items-center rounded-full bg-sun-400/20 px-4 font-display font-extrabold text-soil-500 ring-1 ring-sun-400/40; }
+  .design-sticker-filters { @apply mt-5 flex gap-2 overflow-x-auto pb-2 scrollbar-none; }
+  .design-sticker-filters button { @apply min-h-11 shrink-0 rounded-full bg-white px-4 text-sm font-bold text-forest-700 ring-1 ring-forest-100 transition hover:bg-sky-100; }
+  .design-sticker-filters button.is-active { @apply bg-forest-700 text-white ring-forest-700 shadow-soft; }
+  .design-shop-message { @apply mt-2 min-h-6 text-sm font-semibold text-forest-600; }
+  .design-sticker-grid { @apply mt-3 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5; }
+  .design-sticker-card { @apply flex flex-col items-center rounded-pebble bg-gradient-to-b from-white to-[#fff8ed] p-3 text-center ring-1 ring-[#eedfc8] shadow-sm transition hover:-translate-y-1 hover:shadow-soft; }
+  .design-sticker-card.is-owned { @apply from-[#f1faea] to-white ring-forest-300; }
+  .design-sticker-art { width: 112px; height: 112px; @apply ring-[5px] ring-white shadow-soft; }
+  .design-sticker-card h3 { @apply mt-3 font-display text-base font-extrabold text-forest-800; }
+  .design-sticker-card button { @apply mt-2 min-h-10 w-full rounded-full bg-[#ec6f9f] px-3 text-sm font-extrabold text-white shadow-sm transition hover:bg-[#dc5f91]; }
+  .design-sticker-card button:disabled { @apply cursor-default bg-forest-100 text-forest-700 shadow-none; }
+  .design-shop-empty { @apply mt-4 rounded-barn bg-white/75 p-8 text-center font-semibold text-forest-500 ring-1 ring-forest-100; }
+  .design-sheet-source { @apply mt-5 border-t border-forest-100 pt-4; }
+  .design-sheet-source summary { @apply cursor-pointer font-display font-bold text-forest-700 tap; }
+  .design-sheet-source > div { @apply mt-3 grid gap-3 sm:grid-cols-2 lg:grid-cols-3; }
+  .design-sheet-source a { @apply overflow-hidden rounded-barn bg-white p-2 shadow-sm ring-1 ring-forest-100 transition hover:-translate-y-0.5; }
+  .design-sheet-source img { @apply aspect-[5/3] w-full rounded-lg object-cover; }
+  .design-sheet-source a span { @apply block px-1 pb-1 pt-2 text-sm font-bold text-forest-700; }
   .side-shortcut { @apply flex flex-col items-center gap-1 rounded-barn py-2 text-xl text-forest-700 hover:bg-sky-100/60; }
   .side-shortcut small { @apply text-[10px] font-semibold; }
   .lesson-focus-header { @apply mx-auto flex w-full max-w-4xl items-center gap-4 rounded-barn bg-white/90 px-3 py-2.5 ring-1 ring-sky-200 shadow-soft backdrop-blur; }
@@ -209,6 +229,7 @@
   .animal-friend { width: 94px; }
   .flying-plane { left: 70%; top: 22%; font-size: 1.9rem; }
   .sticker-preview-row .sticker-crop { width: 66px; height: 66px; }
+  .design-sticker-art { width: 96px; height: 96px; }
   .sticker-album-link { width: 100%; }
 }
 
