@@ -7,6 +7,7 @@ import { GradePicker } from '@/components/GradePicker';
 import { Cloud, Flower, GrassTuft, Sun, Tree } from '@/components/decor/ForestDecor';
 import { dayOfSummer } from '@/data/plan60';
 import { gradeDef } from '@/data/grades';
+import { StickerCrop } from '@/components/ui/StickerCrop';
 
 const SUBJECT = {
   english: { label: '英语', icon: '🔤', tone: 'bg-sky-200 text-sky-600' },
@@ -64,6 +65,9 @@ export function HomePage() {
         <Cloud className="absolute left-[42%] top-5 w-24 opacity-90 animate-drift" />
         <Cloud className="absolute right-[7%] top-20 w-16 opacity-75 animate-drift" style={{ animationDelay: '2s' }} />
         <span className="flying-plane" aria-hidden>✈️</span>
+        <StickerCrop sheet="garden" position="3% 4%" label="花朵贴纸" className="hero-sticker hero-sticker-flower" zoom={390} />
+        <StickerCrop sheet="pink" position="60% 86%" label="粉色小兔贴纸" className="hero-sticker hero-sticker-rabbit" zoom={390} />
+        <StickerCrop sheet="birthday" position="54% 52%" label="礼物贴纸" className="hero-sticker hero-sticker-gift" zoom={420} />
         <Tree className="absolute -bottom-3 left-[46%] hidden w-24 opacity-85 md:block" />
         <Flower className="absolute bottom-1 left-5 w-10 opacity-90" />
         <GrassTuft className="absolute bottom-0 left-[32%] w-16 opacity-80" />
@@ -90,6 +94,21 @@ export function HomePage() {
       </section>
 
       <GradePicker />
+
+      <section className="sticker-reward-strip mt-5" aria-labelledby="sticker-reward-heading">
+        <div className="min-w-0 flex-1">
+          <span className="sticker-kicker">✨ 今日贴纸补给</span>
+          <h2 id="sticker-reward-heading" className="mt-1 font-display text-xl font-extrabold text-forest-900 sm:text-2xl">完成学习，挑一张喜欢的贴纸</h2>
+          <p className="mt-1 text-sm font-medium text-forest-600">动物、花朵、生日礼物和小点心，都已经放进贴纸口袋啦。</p>
+        </div>
+        <div className="sticker-preview-row" aria-label="今日可以收集的贴纸">
+          <StickerCrop sheet="garden" position="56% 5%" label="蝴蝶花朵贴纸" />
+          <StickerCrop sheet="birthday" position="7% 4%" label="生日小熊贴纸" />
+          <StickerCrop sheet="pink" position="50% 82%" label="粉色小兔贴纸" />
+          <StickerCrop sheet="snack" position="40% 18%" label="冰淇淋贴纸" />
+        </div>
+        <button className="sticker-album-link" onClick={() => navigate('/album')}>打开贴纸册 <span aria-hidden>→</span></button>
+      </section>
 
       <section className="journey-card mt-5" aria-labelledby="next-task-heading">
         <div className="flex flex-wrap items-center justify-between gap-3">
