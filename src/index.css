@@ -24,6 +24,7 @@
   }
   /* iPad / iOS: avoid horizontal overscroll */
   html, body { overscroll-behavior-x: none; }
+  body { overflow-x: hidden; }
   /* Bigger readable type for kids on iPad */
   .type-display { @apply font-display font-bold tracking-tight; }
   .type-h1 { @apply font-display font-bold text-3xl md:text-4xl; letter-spacing: -0.01em; }
@@ -65,7 +66,7 @@
   }
 
   .card {
-    @apply bg-cream-50 rounded-pebble shadow-soft ring-1 ring-forest-100;
+    @apply bg-cream-50/95 backdrop-blur-sm rounded-pebble shadow-soft ring-1 ring-white/80;
   }
   .card-leaf {
     @apply bg-forest-50 rounded-leaf shadow-soft;
@@ -110,6 +111,50 @@
   .container-forest {
     @apply max-w-[1280px] mx-auto px-4 md:px-8;
   }
+
+  .sky-station {
+    @apply relative min-h-[390px] overflow-hidden rounded-[32px] p-5 sm:p-7 md:p-9 shadow-lift ring-1 ring-white/80;
+    background:
+      radial-gradient(circle at 85% 14%, rgba(255,244,167,.95) 0 7%, transparent 7.5%),
+      linear-gradient(180deg, rgba(218,241,255,.97) 0%, rgba(238,249,255,.95) 54%, rgba(225,242,207,.96) 55%, rgba(188,221,147,.94) 100%);
+  }
+  .sky-station::after {
+    content: '';
+    @apply pointer-events-none absolute inset-x-0 bottom-0 h-24;
+    background: radial-gradient(ellipse at 12% 100%, rgba(91,151,66,.38) 0 45%, transparent 46%), radial-gradient(ellipse at 68% 110%, rgba(124,178,96,.34) 0 45%, transparent 46%);
+  }
+  .station-sign { @apply inline-flex items-center rounded-full bg-white/85 px-3 py-1.5 text-sm font-bold text-sky-600 shadow-soft ring-1 ring-sky-200; }
+  .journey-pill { @apply inline-flex rounded-full bg-white/75 px-3 py-1.5 shadow-sm ring-1 ring-white; }
+  .animal-platform { @apply absolute bottom-7 right-3 z-10 flex items-end sm:right-6 md:right-10; }
+  .animal-friend { @apply relative h-auto w-[86px] drop-shadow-[0_10px_8px_rgba(49,92,37,0.16)] sm:w-[108px] md:w-[126px]; }
+  .animal-cat { transform: rotate(-5deg) translateX(16px); }
+  .animal-dog { @apply z-10; transform: translateY(-5px); }
+  .animal-rabbit { transform: rotate(5deg) translateX(-16px); }
+  .rail-line { @apply absolute inset-x-0 bottom-3 z-20 h-3 border-y-2 border-soil-500/45; background: repeating-linear-gradient(90deg, transparent 0 20px, rgba(133,94,51,.5) 20px 26px); }
+  .little-train { @apply absolute -top-8 text-3xl; animation: trainRide 15s linear infinite; }
+  .flying-plane { @apply absolute left-[48%] top-[25%] z-10 text-4xl drop-shadow-md; animation: planeGlide 8s ease-in-out infinite; }
+
+  .journey-card { @apply rounded-[28px] bg-cream-50/95 p-5 sm:p-7 shadow-lift ring-1 ring-white/80 backdrop-blur; }
+  .next-stop { @apply flex flex-col items-start gap-4 rounded-pebble bg-white/80 p-4 sm:flex-row sm:items-center sm:p-5 ring-1 ring-sky-200 shadow-soft; }
+  .subject-chip { @apply inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-sm font-bold; }
+  .text-link { @apply font-semibold text-forest-700 underline underline-offset-4 tap; }
+  .summary-row { @apply flex cursor-pointer list-none items-center justify-between gap-4 p-4 sm:p-5 tap; }
+  .summary-row::-webkit-details-marker { display: none; }
+  .summary-chevron { @apply text-2xl text-forest-500 transition-transform; }
+  details[open] > .summary-row .summary-chevron { transform: rotate(180deg); }
+  .task-row { @apply flex w-full items-center gap-3 bg-cream-50 px-3 py-3 text-left tap hover:bg-sky-100/60 transition; }
+  .task-check { @apply grid h-7 w-7 shrink-0 place-items-center rounded-full border-2 border-forest-200 text-sm font-bold; }
+  .task-check-done { @apply border-forest-500 bg-forest-500 text-cream-50; }
+  .shortcut { @apply flex min-h-[108px] flex-col items-start justify-center rounded-barn bg-gradient-to-br from-sky-100 to-forest-50 p-3 text-left ring-1 ring-white tap hover:shadow-soft hover:-translate-y-0.5 transition; }
+  .shortcut > span { @apply text-2xl; }
+  .shortcut > b { @apply mt-1 font-display text-forest-800; }
+  .shortcut > small { @apply mt-0.5 text-forest-500; }
+  .grade-card { @apply flex flex-col items-center rounded-barn bg-white/75 p-3 text-center ring-1 ring-forest-100 tap hover:bg-sky-100/60 hover:ring-sky-300 transition; }
+  .grade-card-active { @apply bg-sun-400/20 ring-2 ring-sun-500 shadow-soft; }
+  .side-shortcut { @apply flex flex-col items-center gap-1 rounded-barn py-2 text-xl text-forest-700 hover:bg-sky-100/60; }
+  .side-shortcut small { @apply text-[10px] font-semibold; }
+  .lesson-focus-header { @apply mx-auto flex w-full max-w-4xl items-center gap-4 rounded-barn bg-white/90 px-3 py-2.5 ring-1 ring-sky-200 shadow-soft backdrop-blur; }
+  .lesson-exit { @apply inline-flex items-center gap-1 rounded-barn px-3 py-2 font-semibold text-forest-700 tap hover:bg-sky-100; }
 }
 
 @layer utilities {
@@ -122,6 +167,15 @@
 @keyframes bgIn { from { opacity: 0; transform: scale(1.04); } to { opacity: 1; transform: scale(1); } }
 @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 @keyframes slideUp { from { opacity: 0; transform: translateY(24px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes trainRide { from { left: -48px; } to { left: calc(100% + 24px); } }
+@keyframes planeGlide { 0%,100% { transform: translate(0,0) rotate(-4deg); } 50% { transform: translate(36px,-18px) rotate(3deg); } }
+
+@media (max-width: 639px) {
+  .sky-station { min-height: 455px; }
+  .animal-platform { right: 50%; transform: translateX(50%); }
+  .animal-friend { width: 94px; }
+  .flying-plane { left: 70%; top: 22%; font-size: 1.9rem; }
+}
 
 /* 大富翁小鹿棋子：每走一格重播一次弹跳（key={pos} 触发） */
 @keyframes pawn-hop {

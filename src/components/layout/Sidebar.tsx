@@ -9,9 +9,7 @@ const items = [
   { to: '/english',  label: '英语',     emoji: '🔤' },
   { to: '/math',     label: '数学',     emoji: '🥕' },
   { to: '/chinese',  label: '语文',     emoji: '📚' },
-  { to: '/battle',   label: '飞机大战', emoji: '✈️' },
-  { to: '/board',    label: '森林棋盘', emoji: '🗺️' },
-  { to: '/album',    label: '成长图鉴', emoji: '📒' },
+  { to: '/roadmap',  label: '60 天航线', emoji: '✈️' },
 ];
 
 export function Sidebar() {
@@ -29,9 +27,9 @@ export function Sidebar() {
       </div>
       <Flower color="#F4A6C0" className="absolute left-3 top-20 w-7 opacity-80 animate-bob" />
 
-      <div className="text-[11px] uppercase tracking-[0.2em] text-forest-500 px-2 mb-2">学科学习</div>
+      <div className="text-[11px] tracking-[0.18em] text-forest-500 px-2 mb-2">学习列车</div>
       <nav className="flex flex-col gap-1.5">
-        {items.slice(0, 4).map(i => (
+        {items.map(i => (
           <NavLink
             key={i.to}
             to={i.to}
@@ -44,23 +42,12 @@ export function Sidebar() {
         ))}
       </nav>
 
-      <div className="text-[11px] uppercase tracking-[0.2em] text-forest-500 px-2 mt-6 mb-2">成长</div>
-      <nav className="flex flex-col gap-1.5">
-        <NavLink to="/roadmap" className={({ isActive }) => clsx('nav-item', isActive && 'nav-item-active')}>
-          <span className="text-xl" aria-hidden>📅</span>
-          <span>60 天路线图</span>
-        </NavLink>
-        {items.slice(3).map(i => (
-          <NavLink
-            key={i.to}
-            to={i.to}
-            className={({ isActive }) => clsx('nav-item', isActive && 'nav-item-active')}
-          >
-            <span className="text-xl" aria-hidden>{i.emoji}</span>
-            <span>{i.label}</span>
-          </NavLink>
-        ))}
-      </nav>
+      <div className="text-[11px] tracking-[0.18em] text-forest-500 px-2 mt-6 mb-2">森林乐园</div>
+      <div className="grid grid-cols-3 gap-1 px-1">
+        <NavLink to="/board" className="side-shortcut" aria-label="森林棋盘"><span>🗺️</span><small>棋盘</small></NavLink>
+        <NavLink to="/album" className="side-shortcut" aria-label="成长图鉴"><span>🐰</span><small>图鉴</small></NavLink>
+        <NavLink to="/battle" className="side-shortcut" aria-label="飞机大战"><span>🛩️</span><small>游戏</small></NavLink>
+      </div>
 
       <div className="mt-auto pt-6">
         <NavLink to="/parent" className="nav-item text-forest-700">

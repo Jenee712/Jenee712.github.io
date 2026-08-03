@@ -4,6 +4,7 @@ dist
 .DS_Store
 *.local
 .vite
+.netlify
 
 # 百度 TTS 生成脚本的本地密钥与临时文件（绝不提交）
 .tmp/

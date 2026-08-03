@@ -6,19 +6,17 @@ const items = [
   { to: '/english',  label: '英语',     emoji: '🔤' },
   { to: '/math',     label: '数学',     emoji: '🥕' },
   { to: '/chinese',  label: '语文',     emoji: '📚' },
-  { to: '/roadmap',  label: '路线图',   emoji: '📅' },
-  { to: '/board',    label: '棋盘',     emoji: '🗺️' },
-  { to: '/album',    label: '图鉴',     emoji: '📒' },
+  { to: '/roadmap',  label: '航线',     emoji: '✈️' },
 ];
 
 export function MobileNav() {
   return (
     <nav
       className="md:hidden fixed bottom-0 inset-x-0 z-40 bg-cream-50/95 backdrop-blur
-                 border-t border-forest-100 px-1 pt-1.5 pb-[max(8px,env(safe-area-inset-bottom))]"
+                 border-t border-forest-100 px-1 pt-1.5 pb-[max(8px,env(safe-area-inset-bottom))] shadow-[0_-8px_24px_rgba(23,48,20,0.08)]"
       aria-label="底部导航"
     >
-      <div className="grid grid-cols-7">
+      <div className="grid grid-cols-5 max-w-lg mx-auto">
         {items.map(i => (
           <NavLink
             key={i.to}

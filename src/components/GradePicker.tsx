@@ -1,24 +1,26 @@
 import { useAppStore } from '@/store/useAppStore';
 import { GRADES } from '@/data/grades';
+import { gradeDef } from '@/data/grades';
 
 /** 年級選擇器：7 張卡片對應 K / G1–G6，點擊切換整個工作台的內容。 */
 export function GradePicker() {
   const grade = useAppStore((s) => s.grade);
   const setGrade = useAppStore((s) => s.setGrade);
+  const current = gradeDef(grade);
   return (
-    <section className="mt-6" aria-labelledby="grade-picker">
-      <div className="flex items-end justify-between gap-3">
-        <h2 id="grade-picker" className="type-h2">🎒 選擇年級</h2>
-        <span className="pill whitespace-nowrap">7 套學習玩耍工作台 · 標準版骨架</span>
-      </div>
-      <div className="mt-4 grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 gap-3">
+    <details className="card mt-5 overflow-hidden" aria-labelledby="grade-picker">
+      <summary className="summary-row">
+        <span><strong id="grade-picker" className="font-display text-xl text-forest-800">🎒 当前：{current.fullLabel}</strong><span className="mt-0.5 block text-sm text-forest-500">点击切换其他年级</span></span>
+        <span className="summary-chevron" aria-hidden>⌄</span>
+      </summary>
+      <div className="grid grid-cols-2 gap-3 px-4 pb-4 sm:grid-cols-4 sm:px-5 sm:pb-5 lg:grid-cols-7">
         {GRADES.map((g) => {
           const active = g.key === grade;
           return (
             <button
               key={g.key}
               onClick={() => setGrade(g.key)}
-              className={`card p-3 flex flex-col items-center text-center tap transition ring-2 ${active ? 'ring-forest-500 bg-forest-50' : 'ring-transparent hover:ring-forest-200'}`}
+              className={`grade-card ${active ? 'grade-card-active' : ''}`}
               aria-pressed={active}
             >
               <span className="text-3xl" aria-hidden>{g.emoji}</span>
@@ -29,6 +31,6 @@ export function GradePicker() {
           );
         })}
       </div>
-    </section>
+    </details>
   );
 }

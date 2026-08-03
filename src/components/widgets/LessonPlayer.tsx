@@ -52,7 +52,16 @@ export function LessonPlayer({ lesson, subject, storyLine, onComplete, onExit }:
   };
 
   return (
-    <div className="min-h-[calc(100dvh-3.5rem)] flex flex-col justify-center p-4 md:p-8">
+    <div className="min-h-[100dvh] flex flex-col p-4 md:p-6">
+      <header className="lesson-focus-header">
+        <button onClick={onExit} className="lesson-exit" aria-label="退出关卡">← <span>返回</span></button>
+        <div className="flex-1 max-w-md">
+          <div className="flex justify-between text-xs font-semibold text-forest-600 mb-1.5"><span>{lesson.title}</span><span>{stepIdx + 1} / {total}</span></div>
+          <div className="progress-track"><div className="progress-fill" style={{ width: `${((stepIdx + 1) / total) * 100}%` }} /></div>
+        </div>
+        <span className="hidden sm:inline text-sm text-forest-500">🐾 伙伴陪学</span>
+      </header>
+      <div className="flex-1 min-w-0 flex flex-col justify-center">
       <LearningStage
         mascot={mascot}
         title={`${lesson.title}`}
@@ -77,6 +86,7 @@ export function LessonPlayer({ lesson, subject, storyLine, onComplete, onExit }:
             <span>🙋</span> 看答案
           </button>
         )}
+      </div>
       </div>
     </div>
   );
