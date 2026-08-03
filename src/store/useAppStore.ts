@@ -218,9 +218,9 @@ export const useAppStore = create<State>((set, get) => {
 
     // ------- 年级切换（7 套学习工作台的核心开关）-------
     setGrade(grade) {
-      set({ grade });
       refreshGrade(grade);
       saveGrade(grade);
+      set({ grade, tasks: regenTasks(get().studyDay) });
     },
 
     // ------- 大富翁（森林棋盘 80% 重做）-------

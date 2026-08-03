@@ -252,19 +252,25 @@
 .alphabet-title { margin-top: .55rem; color: #183f27; font-family: 'Baloo 2', 'Noto Sans SC', sans-serif; font-size: clamp(1.5rem, 3vw, 2.1rem); font-weight: 800; line-height: 1.14; }
 .alphabet-copy { margin-top: .3rem; color: #55745c; font-weight: 600; }
 .alphabet-badge { display: grid; flex: 0 0 auto; place-items: center; width: 86px; height: 86px; border: 5px solid rgba(255,255,255,.85); border-radius: 50%; background: linear-gradient(135deg, #ffca55, #ff8e76); box-shadow: 0 8px 0 rgba(175, 110, 55, .16); color: white; font-family: 'Baloo 2', sans-serif; font-size: 1.7rem; font-weight: 800; transform: rotate(5deg); }
+.alphabet-day-tabs { position: relative; z-index: 1; display: grid; grid-template-columns: repeat(9, minmax(70px, 1fr)); gap: .55rem; margin-top: 1.1rem; overflow-x: auto; padding: .15rem .1rem .45rem; scrollbar-width: thin; }
+.alphabet-day-tab { display: flex; min-width: 70px; flex-direction: column; align-items: center; gap: .08rem; padding: .55rem .45rem; border: 2px solid rgba(96, 145, 90, .18); border-radius: 16px; background: rgba(255,255,255,.72); color: #56725b; font-size: .7rem; font-weight: 800; transition: transform .16s ease, background .16s ease, border-color .16s ease; }
+.alphabet-day-tab:hover { transform: translateY(-2px); }
+.alphabet-day-tab b { color: #244d30; font-family: 'Baloo 2', sans-serif; font-size: 1rem; letter-spacing: .08em; }
+.alphabet-day-tab-active { border-color: #e5a52a; background: #fff2c9; box-shadow: 0 4px 0 rgba(175, 110, 55, .12); }
 .alphabet-grid { position: relative; z-index: 1; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1rem; margin-top: 1.2rem; }
 .letter-card { display: grid; grid-template-columns: auto minmax(80px, 1fr); grid-template-rows: 1fr auto; align-items: center; gap: .45rem .75rem; min-height: 210px; padding: 1rem; border: 3px solid transparent; border-radius: 26px; box-shadow: 0 8px 0 rgba(69, 89, 63, .1); text-align: left; transition: transform .18s ease, box-shadow .18s ease, border-color .18s ease; }
 .letter-card:hover { transform: translateY(-4px) rotate(-.5deg); box-shadow: 0 13px 0 rgba(69, 89, 63, .09); }
 .letter-card:focus-visible { outline: 4px solid rgba(59, 130, 246, .35); outline-offset: 3px; }
 .letter-card-active { border-color: rgba(62, 134, 71, .55); }
-.letter-card-apple { background: #fff1ef; }
-.letter-card-bear { background: #fff6dc; }
-.letter-card-cat { background: #edf7ff; }
+.letter-card-tone-0 { background: #fff1ef; }
+.letter-card-tone-1 { background: #fff6dc; }
+.letter-card-tone-2 { background: #edf7ff; }
 .letter-pair { display: flex; align-items: baseline; align-self: start; color: #204c2e; font-family: 'Baloo 2', sans-serif; line-height: 1; }
 .letter-pair b { font-size: clamp(3.3rem, 7vw, 5rem); }
 .letter-pair small { margin-left: .14rem; font-size: clamp(1.8rem, 4vw, 2.8rem); font-weight: 700; opacity: .72; }
 .letter-picture-wrap { display: grid; place-items: center; min-height: 118px; }
 .letter-picture { width: 100%; height: 128px; object-fit: contain; filter: drop-shadow(0 7px 5px rgba(55, 72, 50, .13)); }
+.letter-emoji { display: grid; width: 118px; height: 118px; place-items: center; border-radius: 50%; background: rgba(255,255,255,.58); filter: drop-shadow(0 7px 5px rgba(55, 72, 50, .12)); font-size: clamp(4.2rem, 8vw, 6rem); line-height: 1; }
 .letter-word { display: flex; flex-direction: column; color: #284f31; line-height: 1.05; }
 .letter-word b { font-family: 'Baloo 2', sans-serif; font-size: 1.45rem; }
 .letter-word small { margin-top: .2rem; color: #647b67; font-size: .82rem; font-weight: 700; }
@@ -283,6 +289,7 @@
   .alphabet-starter { border-radius: 24px; }
   .alphabet-starter::after { display: none; }
   .alphabet-badge { width: 62px; height: 62px; border-width: 3px; font-size: 1.25rem; }
+  .alphabet-day-tabs { grid-template-columns: repeat(9, 74px); }
   .alphabet-grid { grid-template-columns: 1fr; gap: .75rem; }
   .letter-card { grid-template-columns: 88px minmax(86px, 1fr) auto; grid-template-rows: 1fr; min-height: 132px; padding: .8rem; }
   .letter-pair { align-self: center; }
@@ -290,6 +297,7 @@
   .letter-pair small { font-size: 1.9rem; }
   .letter-picture-wrap { min-height: 96px; }
   .letter-picture { height: 102px; }
+  .letter-emoji { width: 92px; height: 92px; font-size: 4.2rem; }
   .letter-word { display: none; }
   .letter-listen { justify-self: end; white-space: normal; text-align: center; max-width: 68px; }
 }

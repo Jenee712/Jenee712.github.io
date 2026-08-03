@@ -235,9 +235,14 @@ function BlendStep({ step, onResult }: { step: LessonStep; onResult: (ok: boolea
 }
 
 function playReadAlongText(text: string) {
-    const alphabetExample = text.match(/^([ABC]),\s*(apple|bear|cat)\.$/i);
+    const alphabetExample = text.match(/^([A-Z]),\s*([A-Za-z]+(?:[ -][A-Za-z]+)*)\.$/i);
     if (alphabetExample) {
       speakSequence([alphabetExample[1].toUpperCase(), alphabetExample[2].toLowerCase()], 280);
+      return;
+    }
+    const alphabetReview = text.trim().match(/^[A-Z](?:\s+[A-Z])+$/);
+    if (alphabetReview) {
+      speakSequence(text.trim().split(/\s+/), 180);
       return;
     }
     speakAuto(text);

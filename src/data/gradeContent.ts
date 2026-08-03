@@ -17,6 +17,7 @@ import {
   mathContinue as curMathContinue,
 } from '@/data/curriculum';
 import { GRADES, GradeKey, DEFAULT_GRADE, gradeDef } from './grades';
+import { ALPHABET_LETTERS, alphabetLessonId } from './alphabet';
 
 // ----------------------------------------------------------------- 工具
 function shuffle<T>(arr: T[]): T[] {
@@ -147,11 +148,11 @@ function buildEnglishUnits(grade: GradeKey): Unit[] {
       subject: 'english',
       title: isAbcStart ? `${def.label} · ABC 字母启蒙` : `${def.label} · ${t.title}`,
       subtitle: def.tagline,
-      storyTask: isAbcStart ? '和小鹿一起找到 A、B、C 字母果实' : `在森林里练习「${t.title}」，帮小鹿收集星星`,
+      storyTask: isAbcStart ? '和小鹿用9天收集 A 到 Z 字母果实' : `在森林里练习「${t.title}」，帮小鹿收集星星`,
       goals: isAbcStart ? [
-        '认识大小写 A a、B b、C c',
-        '跟读 apple、bear、cat',
-        '完成字母描红',
+        '认识 A–Z 26个字母的大小写',
+        '每天跟读3个字母和示例词',
+        '完成点选、描红与跟读',
       ] : [
         `认识 ${def.label} 程度的${t.title}内容`,
         '听音辨形，开口跟读',
@@ -160,7 +161,7 @@ function buildEnglishUnits(grade: GradeKey): Unit[] {
       progress: 0,
       current: i === 0,
       done: false,
-      lessons: 3,
+      lessons: isAbcStart ? 27 : 3,
       trackKey: t.key,
     };
   });
@@ -174,36 +175,34 @@ function buildEnglishLessons(grade: GradeKey): Lesson[] {
   let idx = 0;
   ENG_TRACKS.forEach((t, ti) => {
     if (grade === 'L1' && t.key === 'letter_sound') {
-      const abc = [
-        { upper: 'A', lower: 'a', word: 'apple', cn: '苹果' },
-        { upper: 'B', lower: 'b', word: 'bear', cn: '小熊' },
-        { upper: 'C', lower: 'c', word: 'cat', cn: '小猫' },
-      ];
-      abc.forEach((item, letterIndex) => {
+      ALPHABET_LETTERS.forEach((item, letterIndex) => {
+        const day = Math.floor(letterIndex / 3) + 1;
+        const dayStart = Math.min(23, Math.floor(letterIndex / 3) * 3);
+        const choices = ALPHABET_LETTERS.slice(dayStart, dayStart + 3).map((letter) => letter.upper);
         idx += 1;
         lessons.push({
-          id: `g-L1-eng-letter_sound-${letterIndex}`,
+          id: alphabetLessonId(item.upper),
           index: idx,
-          title: `认识字母 ${item.upper} ${item.lower}`,
+          title: `第${day}天 · 认识字母 ${item.upper} ${item.lower}`,
           durationMin: 5,
           kind: 'letter_trace',
           steps: [
             {
-              id: `g-L1-eng-letter_sound-${letterIndex}-choose`,
+              id: `${alphabetLessonId(item.upper)}-choose`,
               prompt: `找到大写字母 ${item.upper}`,
               answer: item.upper,
-              choices: ['A', 'B', 'C'],
+              choices,
               ui: 'tap_choice',
               hint: `看看字母卡上的 ${item.upper}`,
             },
             {
-              id: `g-L1-eng-letter_sound-${letterIndex}-trace`,
+              id: `${alphabetLessonId(item.upper)}-trace`,
               prompt: `用手指描一描 ${item.upper}`,
               answer: item.upper,
               ui: 'trace_letter',
             },
             {
-              id: `g-L1-eng-letter_sound-${letterIndex}-read`,
+              id: `${alphabetLessonId(item.upper)}-read`,
               prompt: `跟读：${item.upper}, ${item.word}.`,
               answer: `${item.upper}, ${item.word}.`,
               choicesCn: [item.cn],
@@ -211,6 +210,18 @@ function buildEnglishLessons(grade: GradeKey): Lesson[] {
             },
           ],
         });
+      });
+      idx += 1;
+      lessons.push({
+        id: 'g-L1-eng-letter_sound-review',
+        index: idx,
+        title: '第9天 · A–Z 字母大复习',
+        durationMin: 6,
+        kind: 'letter_trace',
+        steps: [
+          { id: 'g-L1-eng-letter_sound-review-1', prompt: '找到字母 Z', answer: 'Z', choices: ['X', 'Y', 'Z'], ui: 'tap_choice' },
+          { id: 'g-L1-eng-letter_sound-review-2', prompt: '跟读 A 到 Z 的最后三个字母', answer: 'X Y Z', ui: 'read_along' },
+        ],
       });
       return;
     }

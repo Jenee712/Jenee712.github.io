@@ -18,6 +18,8 @@ import {
   phonicsLessons, phonicsChallenge, englishThemeWordLessons, englishSentenceLessons, englishSightWordLessons,
   chineseLessons,
 } from './curriculum';
+import { getCurrentGrade } from './gradeContent';
+import { ALPHABET_DAYS, alphabetLessonId } from './alphabet';
 
 const SUMMER_START = '2026-07-01';
 
@@ -116,7 +118,36 @@ export function getDayPlan(day: number, weak: WeakLesson[] = []): TodayTask[] {
   const tasks: TodayTask[] = [];
 
   // 1) 英语 4 个模块（前置，按家长要求加大英语比重 & 体量 ×2）
-  def.englishIds.forEach((eid, i) => {
+  const alphabetDay = getCurrentGrade() === 'L1' && day <= ALPHABET_DAYS.length
+    ? ALPHABET_DAYS[day - 1]
+    : null;
+
+  if (alphabetDay) {
+    alphabetDay.letters.forEach((letter, index) => {
+      tasks.push({
+        id: `d${day}-letter-${letter.lower}`,
+        subject: 'english',
+        title: `字母启蒙 · ${letter.upper} ${letter.lower}`,
+        detail: `第${day}天 · ${letter.upper} for ${letter.word} · ${letter.cn}`,
+        durationMin: 5,
+        done: false,
+        kind: 'normal',
+        lessonId: alphabetLessonId(letter.upper),
+      });
+    });
+    if (day === ALPHABET_DAYS.length) {
+      tasks.push({
+        id: `d${day}-letter-review`,
+        subject: 'english',
+        title: '字母启蒙 · A–Z 大复习',
+        detail: '第9天 · 复习26个字母',
+        durationMin: 6,
+        done: false,
+        kind: 'normal',
+        lessonId: 'g-L1-eng-letter_sound-review',
+      });
+    }
+  } else def.englishIds.forEach((eid, i) => {
     // 绘本任务：第 50–60 天阅读段会编排原创绘本
     if (eid.startsWith('pb-')) {
       const book = pictureBookMap.get(eid);

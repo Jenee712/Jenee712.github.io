@@ -1,43 +1,73 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { speakSequence, stopSpeaking } from '@/lib/speech';
-
-const LETTERS = [
-  { letter: 'A', lower: 'a', word: 'apple', cn: '苹果', image: 'a-apple.png', tone: 'letter-card-apple' },
-  { letter: 'B', lower: 'b', word: 'bear', cn: '小熊', image: 'b-bear.png', tone: 'letter-card-bear' },
-  { letter: 'C', lower: 'c', word: 'cat', cn: '小猫', image: 'c-cat.png', tone: 'letter-card-cat' },
-] as const;
+import { ALPHABET_DAYS } from '@/data/alphabet';
+import { useAppStore } from '@/store/useAppStore';
 
 export function AlphabetStarter({ compact = false }: { compact?: boolean }) {
   const base = import.meta.env.BASE_URL;
+  const studyDay = useAppStore((state) => state.studyDay);
+  const currentPlanDay = Math.min(9, Math.max(1, studyDay));
+  const [selectedDay, setSelectedDay] = useState(currentPlanDay);
   const [active, setActive] = useState<string>('A');
+  const selected = ALPHABET_DAYS[selectedDay - 1];
+
+  useEffect(() => {
+    setSelectedDay(currentPlanDay);
+    setActive(ALPHABET_DAYS[currentPlanDay - 1].letters[0].upper);
+  }, [currentPlanDay]);
 
   return (
     <section className={`alphabet-starter ${compact ? 'alphabet-starter-compact' : ''}`} aria-labelledby={compact ? 'abc-english-heading' : 'abc-home-heading'}>
       <div className="alphabet-heading">
         <div>
-          <span className="alphabet-kicker">🌟 第1级·字母启蒙</span>
-          <h2 id={compact ? 'abc-english-heading' : 'abc-home-heading'} className="alphabet-title">从 A B C 开始认识英文字母</h2>
-          <p className="alphabet-copy">看图片、认大小写、点一点听发音。</p>
+          <span className="alphabet-kicker">🌟 第1级·A–Z 字母启蒙</span>
+          <h2 id={compact ? 'abc-english-heading' : 'abc-home-heading'} className="alphabet-title">9天认识 A 到 Z</h2>
+          <p className="alphabet-copy">每天最多3个新字母，看图、认大小写、听女声发音。</p>
         </div>
-        <div className="alphabet-badge" aria-hidden>ABC</div>
+        <div className="alphabet-badge" aria-hidden>A–Z</div>
+      </div>
+
+      <div className="alphabet-day-tabs" role="tablist" aria-label="A到Z字母学习计划">
+        {ALPHABET_DAYS.map((group) => {
+          const label = group.letters.map((letter) => letter.upper).join('');
+          return (
+            <button
+              type="button"
+              key={group.day}
+              role="tab"
+              aria-selected={selectedDay === group.day}
+              className={`alphabet-day-tab ${selectedDay === group.day ? 'alphabet-day-tab-active' : ''}`}
+              onClick={() => {
+                setSelectedDay(group.day);
+                setActive(group.letters[0].upper);
+                stopSpeaking();
+              }}
+            >
+              <span>第{group.day}天</span>
+              <b>{label}</b>
+            </button>
+          );
+        })}
       </div>
 
       <div className="alphabet-grid">
-        {LETTERS.map((item) => (
+        {selected.letters.map((item, index) => (
           <button
             type="button"
-            key={item.letter}
-            className={`letter-card ${item.tone} ${active === item.letter ? 'letter-card-active' : ''}`}
+            key={item.upper}
+            className={`letter-card letter-card-tone-${(index + selectedDay) % 3} ${active === item.upper ? 'letter-card-active' : ''}`}
             onClick={() => {
-              setActive(item.letter);
+              setActive(item.upper);
               stopSpeaking();
-              speakSequence([item.letter, item.word], 280);
+              speakSequence([item.upper, item.word], 280);
             }}
-            aria-label={`点击听 ${item.letter}，${item.word}`}
+            aria-label={`点击听 ${item.upper}，${item.word}`}
           >
-            <span className="letter-pair"><b>{item.letter}</b><small>{item.lower}</small></span>
+            <span className="letter-pair"><b>{item.upper}</b><small>{item.lower}</small></span>
             <span className="letter-picture-wrap">
-              <img src={`${base}assets/alphabet/${item.image}`} alt={`${item.letter} for ${item.word}`} className="letter-picture" />
+              {item.image
+                ? <img src={`${base}assets/alphabet/${item.image}`} alt={`${item.upper} for ${item.word}`} className="letter-picture" />
+                : <span className="letter-emoji" role="img" aria-label={item.cn}>{item.emoji}</span>}
             </span>
             <span className="letter-word"><b>{item.word}</b><small>{item.cn}</small></span>
             <span className="letter-listen">🔊 点击听发音</span>
@@ -48,7 +78,7 @@ export function AlphabetStarter({ compact = false }: { compact?: boolean }) {
       {!compact && (
         <div className="alphabet-tip">
           <span aria-hidden>🐾</span>
-          <p><b>今天的小目标：</b>能指出 A、B、C，并跟读 apple、bear、cat。</p>
+          <p><b>第{selectedDay}天小目标：</b>能指出 {selected.letters.map((letter) => letter.upper).join('、')}，并跟读 {selected.letters.map((letter) => letter.word).join('、')}。</p>
         </div>
       )}
     </section>
