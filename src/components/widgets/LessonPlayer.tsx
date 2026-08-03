@@ -234,12 +234,21 @@ function BlendStep({ step, onResult }: { step: LessonStep; onResult: (ok: boolea
   );
 }
 
+function playReadAlongText(text: string) {
+    const alphabetExample = text.match(/^([ABC]),\s*(apple|bear|cat)\.$/i);
+    if (alphabetExample) {
+      speakSequence([alphabetExample[1].toUpperCase(), alphabetExample[2].toLowerCase()], 280);
+      return;
+    }
+    speakAuto(text);
+}
+
 function ReadAlong({ step, onResult }: { step: LessonStep; onResult: (ok: boolean) => void }) {
   const text = String(step.answer);
   useEffect(() => {
     // 进入跟读步骤时自动读一遍，让孩子先听到正确发音（中英文都支持）
     if (isSpeakable(text)) {
-      const t = setTimeout(() => speakAuto(text), 400);
+      const t = setTimeout(() => playReadAlongText(text), 400);
       return () => { clearTimeout(t); stopSpeaking(); };
     }
   }, [text]);
@@ -262,7 +271,7 @@ function ReadAlong({ step, onResult }: { step: LessonStep; onResult: (ok: boolea
       </div>
       <div className="mt-6 flex flex-col items-center gap-3">
         {isSpeakable(text) && (
-          <button onClick={() => speakAuto(text)} className="btn-primary-lg tap flex items-center gap-2" aria-label="听一听正确发音">
+          <button onClick={() => playReadAlongText(text)} className="btn-primary-lg tap flex items-center gap-2" aria-label="听一听正确发音">
             <span className="text-2xl">🔊</span> 听一听
           </button>
         )}

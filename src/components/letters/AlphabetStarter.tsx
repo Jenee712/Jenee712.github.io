@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { speakAuto, stopSpeaking } from '@/lib/speech';
+import { speakSequence, stopSpeaking } from '@/lib/speech';
 
 const LETTERS = [
   { letter: 'A', lower: 'a', word: 'apple', cn: '苹果', image: 'a-apple.png', tone: 'letter-card-apple' },
@@ -31,7 +31,7 @@ export function AlphabetStarter({ compact = false }: { compact?: boolean }) {
             onClick={() => {
               setActive(item.letter);
               stopSpeaking();
-              speakAuto(`${item.letter}, ${item.word}.`);
+              speakSequence([item.letter, item.word], 280);
             }}
             aria-label={`点击听 ${item.letter}，${item.word}`}
           >
