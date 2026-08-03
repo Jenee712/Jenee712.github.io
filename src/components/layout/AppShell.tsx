@@ -29,7 +29,7 @@ export function AppShell() {
         className="pointer-events-none fixed inset-0 -z-20 block"
       >
         <img
-          src="/backgrounds/field-sheep.jpg"
+          src={`${import.meta.env.BASE_URL}backgrounds/field-sheep.jpg`}
           alt=""
           className="h-full w-full object-cover animate-[bgIn_700ms_ease-out_both]"
           loading="eager"

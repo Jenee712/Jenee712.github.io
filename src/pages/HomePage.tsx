@@ -17,6 +17,7 @@ const SUBJECT = {
 } as const;
 
 export function HomePage() {
+  const publicBase = import.meta.env.BASE_URL;
   const navigate = useNavigate();
   const kid = useAppStore((s) => s.kid);
   const grade = useAppStore((s) => s.grade);
@@ -81,9 +82,9 @@ export function HomePage() {
         </div>
 
         <div className="animal-platform" aria-label="小猫、小狗和小兔学习伙伴">
-          <img src="/assets/stickers/cat-smug.png" alt="小猫学习伙伴" className="animal-friend animal-cat" />
-          <img src="/assets/stickers/corgi-cheer.png" alt="小狗学习伙伴" className="animal-friend animal-dog" />
-          <img src="/assets/stickers/rabbit-happy-cry.png" alt="小兔学习伙伴" className="animal-friend animal-rabbit" />
+          <img src={`${publicBase}assets/stickers/cat-smug.png`} alt="小猫学习伙伴" className="animal-friend animal-cat" />
+          <img src={`${publicBase}assets/stickers/corgi-cheer.png`} alt="小狗学习伙伴" className="animal-friend animal-dog" />
+          <img src={`${publicBase}assets/stickers/rabbit-happy-cry.png`} alt="小兔学习伙伴" className="animal-friend animal-rabbit" />
         </div>
         <div className="rail-line" aria-hidden><span className="little-train">🚂</span></div>
       </section>
