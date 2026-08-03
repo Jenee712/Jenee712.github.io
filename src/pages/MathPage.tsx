@@ -25,7 +25,7 @@ export function MathPage() {
   return (
     <div className="container-forest pt-6">
       <UnitHeader
-        title={`${def.label} · 田園數學站`}
+        title={`${def.label} · 田园数学站`}
         story={current.storyTask}
         today={`今日 ${todayMathMin} / ${todayMathGoal} 分钟`}
         mascot="bear"
@@ -34,7 +34,7 @@ export function MathPage() {
       {/* 六类知识地图（固定站点 + 掌握度） */}
       <section className="mt-6" aria-labelledby="math-map">
         <div className="flex items-end justify-between">
-          <h2 id="math-map" className="type-h2">{def.label} · 知識地圖</h2>
+          <h2 id="math-map" className="type-h2">{def.label} · 知识地图</h2>
           <span className="pill">数 → 加减 → 形状 → 比较 → 时钟 → 图表</span>
         </div>
         <div className="mt-4">
@@ -101,7 +101,7 @@ export function MathPage() {
 
       <section className="mt-6 grid grid-cols-1 md:grid-cols-3 gap-4">
         <FooterCard title="内容入口" body="六类知识形成固定地图，进度既显示当前主题，也保留后续目标预告。" />
-        <FooterCard title="交互形式" body="拖动物件、数一数、配对大小、拨动时针、涂色生成简单图表。" />
+        <FooterCard title="交互形式" body="拖动对象、数一数、配对大小、拨动时针、涂色生成简单图表。" />
         <FooterCard title="抽象阶梯" body={'每个概念按"实物图 → 图形符号 → 数字算式"推进，避免过早纯计算。'} />
       </section>
     </div>

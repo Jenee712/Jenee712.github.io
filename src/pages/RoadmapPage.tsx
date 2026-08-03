@@ -60,7 +60,7 @@ export function RoadmapPage() {
               今天：<span className="font-bold text-forest-700">暑期第 {today} 天</span> · 已完成 {completedCount} / {PLAN_TOTAL_DAYS} 天（{pct}%）
             </p>
             <p className="text-xs text-forest-600/80 mt-1">
-              英语按週進階：主題詞（英↔中翻譯）→ 句型（中翻英）→ 閱讀理解，每天都不一樣。
+              英语按周进阶：主题词（英↔中翻译）→ 句型（中翻英）→ 阅读理解，每天都不一样。
             </p>
             {studyDay !== today ? (
               <div className="mt-2 inline-flex items-center gap-2 rounded-full bg-forest-500/10 ring-1 ring-forest-400/30 px-3 py-1 text-xs text-forest-700">
@@ -117,7 +117,7 @@ export function RoadmapPage() {
                 }
                 aria-label={`第 ${d} 天 ${themeShort}${isDone ? '（已完成）' : isToday ? '（今天）' : ''}，点击预览`}
               >
-                <div className="text-[9px] sm:text-[11px] font-bold opacity-80">週{WEEKDAY[(d - 1) % 7]}</div>
+                <div className="text-[9px] sm:text-[11px] font-bold opacity-80">周{WEEKDAY[(d - 1) % 7]}</div>
                 <div className="font-display font-extrabold text-base sm:text-xl leading-none">{d}</div>
                 <div className="text-[8px] sm:text-[10px] leading-tight opacity-90 truncate w-full mt-0.5">
                   {themeShort.replace(/^(第\s*\d+\s*周\s*·\s*)/, '')}

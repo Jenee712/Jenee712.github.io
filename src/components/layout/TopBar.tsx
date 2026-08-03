@@ -40,8 +40,8 @@ export function TopBar() {
           <button
             onClick={() => navigate('/')}
             className="pill pill-forest tap"
-            title="切換年級"
-            aria-label={`目前年級：${gdef.fullLabel}，點擊回首頁切換`}
+            title="切换年级"
+            aria-label={`目前年级：${gdef.fullLabel}，点击回首页切换`}
           >
             <span aria-hidden>{gdef.emoji}</span><span>{gdef.label}</span>
           </button>

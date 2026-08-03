@@ -223,6 +223,55 @@
 @keyframes planeGlide { 0%,100% { transform: translate(0,0) rotate(-4deg); } 50% { transform: translate(36px,-18px) rotate(3deg); } }
 @keyframes musicPulse { 0%,100% { transform: scale(1); } 50% { transform: scale(1.09) rotate(4deg); } }
 
+/* 第1级·ABC 字母花园 */
+.alphabet-starter {
+  position: relative;
+  overflow: hidden;
+  margin-top: 1.25rem;
+  padding: clamp(1.1rem, 3vw, 1.75rem);
+  border: 2px solid rgba(116, 173, 103, .28);
+  border-radius: 32px;
+  background:
+    radial-gradient(circle at 90% 12%, rgba(255, 225, 104, .36) 0 72px, transparent 74px),
+    linear-gradient(135deg, #fffdf4 0%, #eef9ea 52%, #e9f7ff 100%);
+  box-shadow: 0 16px 34px rgba(54, 92, 56, .11), inset 0 1px 0 rgba(255,255,255,.9);
+}
+.alphabet-starter::after {
+  content: '☁️  ✨  ☁️';
+  position: absolute;
+  right: 4%;
+  top: 1.2rem;
+  color: rgba(86, 152, 194, .5);
+  font-size: 1.05rem;
+  letter-spacing: .6rem;
+  pointer-events: none;
+}
+.alphabet-starter-compact { margin-top: 1.5rem; }
+.alphabet-heading { position: relative; z-index: 1; display: flex; align-items: center; justify-content: space-between; gap: 1rem; }
+.alphabet-kicker { display: inline-flex; padding: .38rem .75rem; border-radius: 999px; background: #dff2d9; color: #39743b; font-size: .82rem; font-weight: 800; }
+.alphabet-title { margin-top: .55rem; color: #183f27; font-family: 'Baloo 2', 'Noto Sans SC', sans-serif; font-size: clamp(1.5rem, 3vw, 2.1rem); font-weight: 800; line-height: 1.14; }
+.alphabet-copy { margin-top: .3rem; color: #55745c; font-weight: 600; }
+.alphabet-badge { display: grid; flex: 0 0 auto; place-items: center; width: 86px; height: 86px; border: 5px solid rgba(255,255,255,.85); border-radius: 50%; background: linear-gradient(135deg, #ffca55, #ff8e76); box-shadow: 0 8px 0 rgba(175, 110, 55, .16); color: white; font-family: 'Baloo 2', sans-serif; font-size: 1.7rem; font-weight: 800; transform: rotate(5deg); }
+.alphabet-grid { position: relative; z-index: 1; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1rem; margin-top: 1.2rem; }
+.letter-card { display: grid; grid-template-columns: auto minmax(80px, 1fr); grid-template-rows: 1fr auto; align-items: center; gap: .45rem .75rem; min-height: 210px; padding: 1rem; border: 3px solid transparent; border-radius: 26px; box-shadow: 0 8px 0 rgba(69, 89, 63, .1); text-align: left; transition: transform .18s ease, box-shadow .18s ease, border-color .18s ease; }
+.letter-card:hover { transform: translateY(-4px) rotate(-.5deg); box-shadow: 0 13px 0 rgba(69, 89, 63, .09); }
+.letter-card:focus-visible { outline: 4px solid rgba(59, 130, 246, .35); outline-offset: 3px; }
+.letter-card-active { border-color: rgba(62, 134, 71, .55); }
+.letter-card-apple { background: #fff1ef; }
+.letter-card-bear { background: #fff6dc; }
+.letter-card-cat { background: #edf7ff; }
+.letter-pair { display: flex; align-items: baseline; align-self: start; color: #204c2e; font-family: 'Baloo 2', sans-serif; line-height: 1; }
+.letter-pair b { font-size: clamp(3.3rem, 7vw, 5rem); }
+.letter-pair small { margin-left: .14rem; font-size: clamp(1.8rem, 4vw, 2.8rem); font-weight: 700; opacity: .72; }
+.letter-picture-wrap { display: grid; place-items: center; min-height: 118px; }
+.letter-picture { width: 100%; height: 128px; object-fit: contain; filter: drop-shadow(0 7px 5px rgba(55, 72, 50, .13)); }
+.letter-word { display: flex; flex-direction: column; color: #284f31; line-height: 1.05; }
+.letter-word b { font-family: 'Baloo 2', sans-serif; font-size: 1.45rem; }
+.letter-word small { margin-top: .2rem; color: #647b67; font-size: .82rem; font-weight: 700; }
+.letter-listen { justify-self: end; padding: .42rem .62rem; border-radius: 999px; background: rgba(255,255,255,.78); color: #52705a; font-size: .72rem; font-weight: 800; white-space: nowrap; }
+.alphabet-tip { position: relative; z-index: 1; display: flex; align-items: center; gap: .65rem; margin-top: 1rem; padding: .8rem 1rem; border-radius: 18px; background: rgba(255,255,255,.72); color: #4c6c53; font-size: .9rem; }
+.alphabet-tip > span { font-size: 1.6rem; }
+
 @media (max-width: 639px) {
   .sky-station { min-height: 455px; }
   .animal-platform { right: 50%; transform: translateX(50%); }
@@ -231,6 +280,18 @@
   .sticker-preview-row .sticker-crop { width: 66px; height: 66px; }
   .design-sticker-art { width: 96px; height: 96px; }
   .sticker-album-link { width: 100%; }
+  .alphabet-starter { border-radius: 24px; }
+  .alphabet-starter::after { display: none; }
+  .alphabet-badge { width: 62px; height: 62px; border-width: 3px; font-size: 1.25rem; }
+  .alphabet-grid { grid-template-columns: 1fr; gap: .75rem; }
+  .letter-card { grid-template-columns: 88px minmax(86px, 1fr) auto; grid-template-rows: 1fr; min-height: 132px; padding: .8rem; }
+  .letter-pair { align-self: center; }
+  .letter-pair b { font-size: 3.4rem; }
+  .letter-pair small { font-size: 1.9rem; }
+  .letter-picture-wrap { min-height: 96px; }
+  .letter-picture { height: 102px; }
+  .letter-word { display: none; }
+  .letter-listen { justify-self: end; white-space: normal; text-align: center; max-width: 68px; }
 }
 
 /* 大富翁小鹿棋子：每走一格重播一次弹跳（key={pos} 触发） */

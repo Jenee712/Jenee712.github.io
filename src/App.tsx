@@ -24,7 +24,7 @@ import { NotFoundPage } from '@/pages/NotFoundPage';
 
 export default function App() {
   useEffect(() => {
-    // 啟動時從「服務端」拉取當日計劃（含薄弱點複習），保證內容每日自動更新
+    // 启动时从「服务端」拉取当日计划（含薄弱点复习），保证内容每日自动更新
     useAppStore.getState().refresh();
   }, []);
   return (

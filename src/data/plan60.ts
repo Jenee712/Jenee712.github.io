@@ -40,8 +40,8 @@ export interface DayDef {
 
 const ALL_CHINESE = chineseLessons.map((l) => l.id);
 
-// 每段主题对应：数学课池 + 英语课池（英语按週進階，已徹底廢除自然拼讀）：
-//   主題詞·生活(vocabBasic) → 主題詞·世界(vocabExt) → 句型翻譯(sentences) → 閱讀理解(reading)
+// 每段主题对应：数学课池 + 英语课池（英语按周进阶，已彻底废除自然拼读）：
+//   主题词·生活(vocabBasic) → 主题词·世界(vocabExt) → 句型翻译(sentences) → 阅读理解(reading)
 const SEGMENT: { theme: string; pool: string[]; engPool: string[] }[] = [
   { theme: '第 1 周 · 20 以内加法复习',    pool: mathBankByTopic.add20,                 engPool: englishBankByTopic.vocabBasic },
   { theme: '第 2 周 · 100 以内不进位加法', pool: mathBankByTopic.addNC,                  engPool: englishBankByTopic.vocabBasic },
@@ -98,7 +98,7 @@ function detailFor(kind: string): string {
   if (kind === 'character') return '认字与跟读';
   if (kind === 'theme_words') return '英↔中翻译 · 4 关';
   if (kind === 'sentence_build') return '中翻英 · 4 关';
-  if (kind === 'read_along') return '中英對照閱讀';
+  if (kind === 'read_along') return '中英对照阅读';
   return '听 · 读 · 说';
 }
 

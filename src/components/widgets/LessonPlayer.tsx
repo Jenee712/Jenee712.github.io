@@ -114,7 +114,7 @@ function StepView({ step, onResult }: { step: LessonStep; onResult: (ok: boolean
 function PromptTitle({ step, autoSpeak = true, showButton = true }: { step: LessonStep; autoSpeak?: boolean; showButton?: boolean }) {
   // 填空题面（形如 填空：「____ is a book」）：把下划线换成 step.answer，
   // 整句「There is a book」用英文语音读 —— 孩子听到的就是要学的那句话，
-  // 也能彻底避开把 ____ 喂给中文 TTS 出现的「底線/下划线」噪音。
+  // 也能彻底避开把 ____ 喂给中文 TTS 出现的「底线/下划线」噪音。
   const blankSpoken = (() => {
     if (!/_/.test(step.prompt) || step.answer == null) return null;
     const m = step.prompt.match(/「([^」]*)」/);
@@ -298,14 +298,14 @@ function DragCount({ step, onResult }: { step: LessonStep; onResult: (ok: boolea
   const [tray, setTray] = useState(0);
   const reset = () => { setBag1(b1); setBag2(b2 ?? 0); setTray(0); };
 
-  // 明确显示算式 + 一句话说明，让家长/孩子一眼知道"在算什么、怎么操作"
+  // 明确显示算式 + 一句话说明，让家长/孩子一眼知道"在算什幺、怎幺操作"
   const showExpr = mode === 'add' ? (b1 + ' + ' + (b2 ?? '?')) : (b1 + ' − ' + (b2 ?? '?'));
   const showTail = mode === 'add' ? '= ?' : '= ?';
 
   return (
     <div>
       <PromptTitle step={step} />
-      {/* 算式卡：让"在算什么"一目了然 */}
+      {/* 算式卡：让"在算什幺"一目了然 */}
       <div className="mt-4 mx-auto max-w-md card-barn p-4 text-center">
         <div className="text-3xl sm:text-4xl font-display font-extrabold text-forest-800 tracking-wide">
           <span>{b1}</span>
@@ -420,8 +420,8 @@ function NumberPad({ step, onResult }: { step: LessonStep; onResult: (ok: boolea
 
 function OrderWords({ step, onResult }: { step: LessonStep; onResult: (ok: boolean) => void }) {
   const raw = String(step.answer);
-  // 中文（古詩/成語）按空格切只有 1 個 token，根本沒東西可「排」。
-  // 自動切換為「跟我讀」模式：大字呈現 + 自動朗讀 + 「我會讀了」按鈕確認。
+  // 中文（古诗/成语）按空格切只有 1 个 token，根本没东西可「排」。
+  // 自动切换为「跟我读」模式：大字呈现 + 自动朗读 + 「我会读了」按钮确认。
   const tokens = raw.split(/\s+/).filter(Boolean);
   const isSingleToken = tokens.length <= 1;
   const isChineseText = isChinese(raw);
@@ -472,16 +472,16 @@ function OrderWords({ step, onResult }: { step: LessonStep; onResult: (ok: boole
   );
 }
 
-/** 「跟我讀」視圖：給中文古詩/成語的單 token 關卡用。
- *  大字呈現 + 自動朗讀 + 「我會讀了」按鈕確認。 */
+/** 「跟我读」视图：给中文古诗/成语的单 token 关卡用。
+ *  大字呈现 + 自动朗读 + 「我会读了」按钮确认。 */
 function ReciteView({ text, onDone }: { text: string; onDone: () => void }) {
-  // 進入即朗讀一次
+  // 进入即朗读一次
   useEffect(() => {
     const t = setTimeout(() => speakAuto(text), 350);
     return () => { clearTimeout(t); stopSpeaking(); };
   }, [text]);
 
-  // 中文（特別是繁體）字數多，自動放大到適合一行顯示的字號
+  // 中文（特别是繁体）字数多，自动放大到适合一行显示的字号
   const len = text.length;
   const sizeCls =
     len <= 4 ? 'text-4xl sm:text-5xl' :
@@ -491,7 +491,7 @@ function ReciteView({ text, onDone }: { text: string; onDone: () => void }) {
 
   return (
     <div>
-      <h2 className="type-h2 text-center">跟著讀一遍：</h2>
+      <h2 className="type-h2 text-center">跟着读一遍：</h2>
 
       <div className="mt-6 card-leaf p-8 sm:p-10 text-center">
         <p className={`font-display font-bold text-forest-800 leading-relaxed tracking-wider ${sizeCls}`}>
@@ -501,18 +501,18 @@ function ReciteView({ text, onDone }: { text: string; onDone: () => void }) {
           <button
             onClick={() => speakAuto(text)}
             className="btn-secondary tap inline-flex items-center gap-2"
-            aria-label="再聽一次"
+            aria-label="再听一次"
           >
-            <span className="text-2xl">🔊</span> 再聽一次
+            <span className="text-2xl">🔊</span> 再听一次
           </button>          <button
             onClick={onDone}
             className="btn-primary tap inline-flex items-center gap-2"
-            aria-label="我會讀了"
+            aria-label="我会读了"
           >
-            <span className="text-2xl">✅</span> 我會讀了
+            <span className="text-2xl">✅</span> 我会读了
           </button>
         </div>
-        <p className="mt-4 type-meta text-center text-forest-600">💡 大聲跟著讀一讀，讀完按「我會讀了」</p>
+        <p className="mt-4 type-meta text-center text-forest-600">💡 大声跟着读一读，读完按「我会读了」</p>
       </div>
     </div>
   );
@@ -537,7 +537,7 @@ function extractEnglishPhrases(text: string): string[] {
 }
 
 /** 「看答案」面板：显示正确答案 + 发音按钮 + 继续下一题。
- *  选择题会把每个选项的「英文 + 中文翻译」成对朗读，例如 "We go to school" → "我們去學校"。 */
+ *  选择题会把每个选项的「英文 + 中文翻译」成对朗读，例如 "We go to school" → "我们去学校"。 */
 function AnswerView({ step, onContinue }: { step: LessonStep; onContinue: () => void }) {
   let answerText = '';
   let speakText = '';

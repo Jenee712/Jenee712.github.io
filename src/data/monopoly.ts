@@ -40,10 +40,10 @@ export const monoCells: MonopolyCell[] = [
   { index: 9, kind: 'chance', label: '森林奇遇', emoji: '🍀', card: 'chance', desc: '抽一张「森林奇遇」卡，看看今天的好运气！' },
   prop(10, '松果坡', '🌲', 'forest', 12, 3, '坡上全是松果，小鹿用它们数数玩。'),
   prop(11, '云朵峰', '☁️', 'sky', 12, 3, '山顶挨着云朵，能看见很远很远的地方。'),
-  prop(12, '蜂蜜洞', '🍯', 'sun', 14, 3, '树洞里藏著小熊的蜂蜜，香喷喷的。'),
+  prop(12, '蜂蜜洞', '🍯', 'sun', 14, 3, '树洞里藏着小熊的蜂蜜，香喷喷的。'),
   { index: 13, kind: 'fortune', label: '森林考验', emoji: '🔮', card: 'fortune', desc: '抽一张「森林考验」卡，勇敢面对小挑战！' },
   // 14 —— 森林湖（左上角，免费停车）
-  { index: 14, kind: 'park', label: '森林湖', emoji: '🏞️', desc: '安全的森林湖，什么都不会发生，安心歇脚。' },
+  { index: 14, kind: 'park', label: '森林湖', emoji: '🏞️', desc: '安全的森林湖，什幺都不会发生，安心歇脚。' },
   // 顶行（15–20）
   prop(15, '蘑菇圈', '🍄', 'soil', 14, 3, '一圈小蘑菇像小雨伞，是精灵的舞池。'),
   prop(16, '草莓谷', '🍓', 'berry', 16, 4, '红彤彤的草莓铺满山谷，香甜味飘满林间。'),
@@ -55,9 +55,9 @@ export const monoCells: MonopolyCell[] = [
   { index: 21, kind: 'fountain', label: '命运之泉', emoji: '⛲', desc: '来到命运之泉，抽一张卡决定接下来的旅程。' },
   // 右列（22–27）
   prop(22, '彩虹桥', '🌈', 'sky', 18, 4, '雨后出现的彩虹桥，踩上去软软的。'),
-  prop(23, '阳光草坪', '🌞', 'sun', 20, 5, '晒著太阳的暖暖草坪，最适合野餐。'),
+  prop(23, '阳光草坪', '🌞', 'sun', 20, 5, '晒着太阳的暖暖草坪，最适合野餐。'),
   { index: 24, kind: 'animal', label: "小猫的鱼塘", emoji: '🐱', npc: 'cat', owner: 'cat', rent: 3, desc: '这是小猫的鱼塘，路过要付 3 金币鱼食费～' },
-  prop(25, '板栗林', '🌰', 'soil', 20, 5, '板栗裹著小刺球，掉下来咚咚响。'),
+  prop(25, '板栗林', '🌰', 'soil', 20, 5, '板栗裹着小刺球，掉下来咚咚响。'),
   { index: 26, kind: 'fortune', label: '森林考验', emoji: '🔮', card: 'fortune', desc: '最后一处森林考验，鼓起勇气！' },
   prop(27, '月光莓园', '🌙', 'berry', 22, 5, '夜里会发光的莓子，是小兔的珍藏。'),
 ];

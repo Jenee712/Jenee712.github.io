@@ -39,7 +39,7 @@ export function ReviewGarden({ items, onResult, onFinish }: Props) {
     ? (item.answer as string[]).map((s) => s.trim().toLowerCase())
     : [String(item.answer).trim().toLowerCase()];
 
-  // 進入每題時自動朗讀題目
+  // 进入每题时自动朗读题目
   useEffect(() => {
     if (!item) return;
     const t = setTimeout(() => speakAuto(item.prompt), 350);
@@ -97,7 +97,7 @@ export function ReviewGarden({ items, onResult, onFinish }: Props) {
               type="button"
               onClick={() => speakAuto(item.prompt)}
               className="w-9 h-9 rounded-full bg-forest-100 ring-1 ring-forest-300 text-forest-600 text-lg tap flex items-center justify-center hover:scale-110 transition shrink-0"
-              aria-label="再聽一次題目"
+              aria-label="再听一次题目"
             >
               🔊
             </button>
@@ -157,7 +157,7 @@ export function ReviewGarden({ items, onResult, onFinish }: Props) {
               value={String(input ?? '')}
               onChange={(e) => setInput(e.target.value)}
               className="mt-3 w-full text-center text-2xl font-display font-bold rounded-barn border-2 border-forest-300 focus:border-forest-600 focus:outline-none px-3 py-2"
-              placeholder="在這裏輸入"
+              placeholder="在这里输入"
               autoFocus
             />
           )}
@@ -168,7 +168,7 @@ export function ReviewGarden({ items, onResult, onFinish }: Props) {
             <p className="font-display font-bold text-forest-600">🌱 浇好水啦，小苗长高一点！</p>
             {isLetterArray && (
               <p className="text-sm text-forest-600">
-                拼對了：<span className="font-display font-bold text-forest-800">{(item.answer as string[]).join(' - ')}</span>
+                拼对了：<span className="font-display font-bold text-forest-800">{(item.answer as string[]).join(' - ')}</span>
               </p>
             )}
           </div>
@@ -197,8 +197,8 @@ export function ReviewGarden({ items, onResult, onFinish }: Props) {
   );
 }
 
-/** 「拼單詞」輸入：給 rv-sit 這種 answer 為字母數組的題用。
- *  字母盤含正確字母 + 隨機干擾項，點擊字母按順序排，點已選字母可單獨發音。 */
+/** 「拼单词」输入：给 rv-sit 这种 answer 为字母数组的题用。
+ *  字母盘含正确字母 + 随机干扰项，点击字母按顺序排，点已选字母可单独发音。 */
 function LetterTapInput({
   letters,
   value,
@@ -208,7 +208,7 @@ function LetterTapInput({
   value: string[];
   onChange: (v: string[]) => void;
 }) {
-  // 用 version 作為 key，clearAll 時 bump 即可重置字母盤
+  // 用 version 作为 key，clearAll 时 bump 即可重置字母盘
   const [version, setVersion] = useState(0);
 
   const pop = () => {
@@ -224,7 +224,7 @@ function LetterTapInput({
 
   return (
     <div className="mt-3 space-y-3">
-      {/* 字母盤 + 已拼：同一個 version 強綁一起，clearAll 只需 bump version 就能重置字母盤 */}
+      {/* 字母盘 + 已拼：同一个 version 强绑一起，clearAll 只需 bump version 就能重置字母盘 */}
       <LetterPool key={version} letters={letters} value={value} onChange={onChange} />
 
       <div className="flex justify-center gap-2 flex-wrap">
@@ -249,9 +249,9 @@ function LetterTapInput({
             type="button"
             onClick={() => speakAuto(value.join(' '))}
             className="btn-ghost tap text-sm"
-            aria-label="聽一聽拼到現在的單詞"
+            aria-label="听一听拼到现在的单词"
           >
-            🔊 聽一聽
+            🔊 听一听
           </button>
         )}
       </div>
@@ -259,7 +259,7 @@ function LetterTapInput({
   );
 }
 
-/** 字母盤 + 已拼區。外部用 key 重置可一次性清空。 */
+/** 字母盘 + 已拼区。外部用 key 重置可一次性清空。 */
 function LetterPool({
   letters,
   value,
@@ -297,7 +297,7 @@ function LetterPool({
     <>
       <div className="min-h-14 rounded-barn border-2 border-dashed border-forest-300 flex flex-wrap items-center justify-center gap-1.5 p-2 bg-forest-50/40">
         {value.length === 0 ? (
-          <span className="text-forest-400 text-sm">按順序點下面的字母</span>
+          <span className="text-forest-400 text-sm">按顺序点下面的字母</span>
         ) : (
           value.map((c, i) => (
             <button
@@ -305,7 +305,7 @@ function LetterPool({
               type="button"
               onClick={() => speakAuto(c)}
               className="w-11 h-12 rounded-barn bg-forest-100 ring-1 ring-forest-300 font-display font-bold text-forest-800 text-xl hover:bg-forest-200 transition"
-              title="點擊聽發音"
+              title="点击听发音"
             >
               {c.toUpperCase()}
             </button>
@@ -325,7 +325,7 @@ function LetterPool({
                 ? 'bg-cream-50 ring-1 ring-forest-300 text-forest-800 hover:bg-forest-100'
                 : 'bg-forest-50 text-forest-300 ring-1 ring-forest-100 cursor-not-allowed'
             }`}
-            aria-label={`選 ${p.letter.toUpperCase()}`}
+            aria-label={`选 ${p.letter.toUpperCase()}`}
           >
             {p.letter.toUpperCase()}
           </button>

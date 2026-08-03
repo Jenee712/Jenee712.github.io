@@ -8,6 +8,7 @@ import { Cloud, Flower, GrassTuft, Sun, Tree } from '@/components/decor/ForestDe
 import { dayOfSummer } from '@/data/plan60';
 import { gradeDef } from '@/data/grades';
 import { StickerCrop } from '@/components/ui/StickerCrop';
+import { AlphabetStarter } from '@/components/letters/AlphabetStarter';
 
 const SUBJECT = {
   english: { label: '英语', icon: '🔤', tone: 'bg-sky-200 text-sky-600' },
@@ -73,7 +74,7 @@ export function HomePage() {
         <GrassTuft className="absolute bottom-0 left-[32%] w-16 opacity-80" />
 
         <div className="relative z-10 max-w-xl pb-24 sm:pb-28 md:max-w-[58%] md:pb-16">
-          <span className="station-sign">🚉 天空列车学习站 · {currentGrade.label}</span>
+          <span className="station-sign">🚉 天空列车学习站 · 简体字·ABC版 · {currentGrade.label}</span>
           <h1 id="welcome-heading" className="mt-3 font-display text-4xl font-extrabold leading-tight text-forest-900 md:text-5xl">
             下午好，{kid.nickname}！
           </h1>
@@ -94,6 +95,8 @@ export function HomePage() {
       </section>
 
       <GradePicker />
+
+      {grade === 'L1' && <AlphabetStarter />}
 
       <section className="sticker-reward-strip mt-5" aria-labelledby="sticker-reward-heading">
         <div className="min-w-0 flex-1">

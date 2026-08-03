@@ -17,13 +17,13 @@ export function ChineseLessonPage() {
     <LessonPlayer
       lesson={lesson}
       subject="english"
-      storyLine={`語文學習 · ${lesson.title}`}
+      storyLine={`语文学习 · ${lesson.title}`}
       onExit={() => nav('/chinese')}
       onComplete={async (payload) => {
         const t = useAppStore.getState().tasks.find(x => x.lessonId === lesson.id);
         const perfect = payload.correct === payload.total;
         const stickerId = streakDays >= 5 ? 'deer-shine' : perfect ? 'bear-wow' : 'rabbit-happy-cry';
-        const reason = streakDays >= 5 ? '連續打卡' : perfect ? '掌握新的語文知識' : '連續答對，真棒';
+        const reason = streakDays >= 5 ? '连续打卡' : perfect ? '掌握新的语文知识' : '连续答对，真棒';
         const res = t ? await complete(t.id, payload) : { coins: undefined, steps: undefined };
         await award(stickerId, reason, streakDays >= 5 ? 'streak' : 'unit_complete');
         setLast({

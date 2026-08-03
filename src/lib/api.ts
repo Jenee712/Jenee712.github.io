@@ -24,7 +24,7 @@ import { englishBank, englishBankByTopic } from '@/data/englishBank';
 const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
 const uid = (p = 'id') => `${p}-${Math.random().toString(36).slice(2, 10)}`;
 
-// ---- 薄弱點持久化（localStorage，刷新後仍保留，跨天持續複習）----
+// ---- 薄弱点持久化（localStorage，刷新后仍保留，跨天持续复习）----
 const WEAK_KEY = 'ff_weak_lessons_v1';
 function loadWeak(): WeakLesson[] {
   if (typeof window === 'undefined') return [];

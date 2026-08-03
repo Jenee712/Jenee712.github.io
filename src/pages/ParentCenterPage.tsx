@@ -213,7 +213,7 @@ function WeekPlan() {
   const confirmMission = useAppStore(s => s.confirmMission);
 
   const plan = [
-    { day: '周一', en: '字母音 /s/ /p/', math: '3 + 1' },
+    { day: '周一', en: '字元音 /s/ /p/', math: '3 + 1' },
     { day: '周二', en: 'CVC: sat / pat', math: '5 − 1' },
     { day: '周三', en: '绘本跟读 #1',   math: '2 + 3' },
     { day: '周四', en: '复习小花园',     math: '4 + 2' },

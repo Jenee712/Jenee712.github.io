@@ -38,7 +38,8 @@ function loadStudyDay(): number {
 function saveStudyDay(d: number) {
   try { if (typeof localStorage !== 'undefined') localStorage.setItem(STUDY_DAY_KEY, String(d)); } catch { /* ignore */ }
 }
-const GRADE_KEY = 'ff_grade_v1';
+// 简体字·ABC 版使用独立年级记忆，不影响旧版选择。
+const GRADE_KEY = import.meta.env.BASE_URL.includes('/simplified-abc/') ? 'ff_grade_simplified_abc_v1' : 'ff_grade_v1';
 function loadGrade(): GradeKey {
   try {
     const v = typeof localStorage !== 'undefined' ? localStorage.getItem(GRADE_KEY) : null;
@@ -183,7 +184,7 @@ export const useAppStore = create<State>((set, get) => {
     });
   }
 
-  // 依持久化年級同步內容層（G1 原樣；其餘級載入佔位內容）
+  // 依持久化年级同步内容层（G1 原样；其余级载入占位内容）
   refreshGrade(loadGrade());
 
   return {
@@ -215,7 +216,7 @@ export const useAppStore = create<State>((set, get) => {
       set((s) => ({ battleRecords: [r, ...s.battleRecords].slice(0, 50) }));
     },
 
-    // ------- 年級切換（7 套學習工作台的核心開關）-------
+    // ------- 年级切换（7 套学习工作台的核心开关）-------
     setGrade(grade) {
       set({ grade });
       refreshGrade(grade);
@@ -373,11 +374,11 @@ export const useAppStore = create<State>((set, get) => {
     async completeTask(id, payload) {
       const key = `task:${id}:${todayKey()}`;
       const res = await api.completeTask(id, payload, key);
-      // 薄弱點追蹤：答錯 → 記錄；全對 → 解除
+      // 薄弱点追踪：答错 → 记录；全对 → 解除
       const t = get().tasks.find((x) => x.id === id);
       if (t && t.lessonId && t.kind === 'normal' &&
           (t.subject === 'english' || t.subject === 'math' || t.subject === 'chinese')) {
-        const clean = t.title.replace(/^🔁\s*複習\s*·\s*/, '').replace(/^[^·]*·\s*/, '');
+        const clean = t.title.replace(/^🔁\s*复习\s*·\s*/, '').replace(/^[^·]*·\s*/, '');
         if (payload.correct < payload.total) {
           await api.addWeakLesson({ lessonId: t.lessonId, subject: t.subject, title: clean } as WeakLesson);
         } else {

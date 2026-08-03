@@ -43,7 +43,7 @@ export function LearningTaskCard({ task, isNext, onStart }: Props) {
     >
       <span className={clsx('pill !rounded-full !px-2.5 !py-1 !text-xs !font-bold', meta.cls)}>{meta.label}</span>
       {isReview && (
-        <span className="pill !rounded-full !px-2.5 !py-1 !text-xs !font-bold bg-sun-400/20 text-soil-600 ring-sun-400/40">🔁 複習</span>
+        <span className="pill !rounded-full !px-2.5 !py-1 !text-xs !font-bold bg-sun-400/20 text-soil-600 ring-sun-400/40">🔁 复习</span>
       )}
       <div className="min-w-0 flex-1">
         <div className="font-display font-bold text-forest-800 truncate">{task.title}</div>

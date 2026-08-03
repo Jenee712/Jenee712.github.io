@@ -1,6 +1,6 @@
 // ============================================================================
 // 小狗的森林学习站 · 领域类型（Backend-agnostic，可直接映射 REST / WebSocket 载荷）
-// 命名与【二十、核心数据模型】对齐；贴纸严格遵循【十九、贴纸数据结构】。
+// 命名与【二十、内核数据模型】对齐；贴纸严格遵循【十九、贴纸数据结构】。
 // ============================================================================
 
 import type { MonoCardDef } from '@/data/monopoly';
@@ -71,8 +71,8 @@ export interface LessonStep {
   bagOp?: 'add' | 'remove';         // drag_count 第二袋数量（提供则显示两组"合起来"）
 }
 
-// ---------------------------------------------------------------- 英語绘本
-/** 绘本里的一个角色站位（用原創森林角色，不碰任何商业 IP）。 */
+// ---------------------------------------------------------------- 英语绘本
+/** 绘本里的一个角色站位（用原创森林角色，不碰任何商业 IP）。 */
 export interface BookSceneCharacter {
   name: AvatarKey;          // corgi / cat / rabbit / bear / deer / penguin / lop / bird
   x: number;                // 0..100 横向百分比
@@ -257,7 +257,7 @@ export interface BoardProgress {
   weekendRewardUnlocked: boolean;
 }
 
-// ---------------------------------------------------------------- 金币（幂等核心）
+// ---------------------------------------------------------------- 金币（幂等内核）
 export type CoinSource =
   | 'lesson' | 'review' | 'board' | 'streak'
   | 'weekly_goal' | 'exchange' | 'parent_confirm' | 'adjust';
@@ -444,17 +444,17 @@ export interface SyncMeta {
   pendingCount: number;
 }
 
-// ---------------------------------------------------------------- 陀螺對戰
+// ---------------------------------------------------------------- 陀螺对战
 export interface BattleRecord {
   id: string;
   date: string;               // YYYY-MM-DD HH:mm
   playerTop: string;          // 玩家陀螺名
   playerChar: AvatarKey;      // 玩家角色
-  enemyName: string;          // 對手名
-  enemyChar: AvatarKey;       // 對手角色
+  enemyName: string;          // 对手名
+  enemyChar: AvatarKey;       // 对手角色
   result: 'win' | 'lose';
-  coins: number;              // 獲得金幣
-  rounds: number;             // 對戰回合數
+  coins: number;              // 获得金币
+  rounds: number;             // 对战回合数
   skillUsed: boolean;         // 是否使用了技能
 }
 

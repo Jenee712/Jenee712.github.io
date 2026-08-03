@@ -5,6 +5,7 @@ import { EnglishSkillPath } from '@/components/lesson/EnglishSkillPath';
 import { englishUnits, englishContinue, getEnglishLesson } from '@/data/gradeContent';
 import { gradeDef } from '@/data/grades';
 import { dayOfSummer } from '@/data/plan60';
+import { AlphabetStarter } from '@/components/letters/AlphabetStarter';
 
 export function EnglishPage() {
   const nav = useNavigate();
@@ -34,11 +35,13 @@ export function EnglishPage() {
         </div>
       )}
       <UnitHeader
-        title={`${def.label} · 森林英語營`}
+        title={`${def.label} · 森林英语营`}
         story={current.storyTask}
         today={`今日 ${todayEngMin} / ${todayEngGoal} 分钟`}
         mascot="deer"
       />
+
+      {grade === 'L1' && <AlphabetStarter compact />}
 
       {/* 绘本馆入口 */}
       <section className="mt-6">
@@ -61,7 +64,7 @@ export function EnglishPage() {
       {/* 六类稳定技能航线（掌握度） */}
       <section className="mt-6" aria-labelledby="skill-route">
         <div className="flex items-end justify-between">
-          <h2 id="skill-route" className="type-h2">{def.label} · 技能航線</h2>
+          <h2 id="skill-route" className="type-h2">{def.label} · 技能航线</h2>
           <span className="pill">6 类稳定结构 · 主题随单元更换</span>
         </div>
         <div className="mt-4">

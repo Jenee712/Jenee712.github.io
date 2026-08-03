@@ -54,11 +54,13 @@ export const cellKindExplanation: Record<BoardCellKind, { title: string; desc: s
 // ============================================================ 动物表情包贴纸
 // 严格遵循规格【十九】。animatedSrc/staticSrc 指向 /assets/stickers/ 下真实资源
 // （用户后续放入 corgi-cheer.gif / corgi-cheer.png 即可生效；未放入时组件降级显示 SVG 角色）。
+const stickerAsset = (file: string) => `${import.meta.env.BASE_URL}assets/stickers/${file}`;
+
 export const initialStickers: AnimalSticker[] = [
   {
     id: 'corgi-cheer', character: 'corgi', emotion: 'cheer', title: '太棒啦',
     description: '双爪举高，开心弹跳。完成绘本跟读时使用。',
-    animatedSrc: '/assets/stickers/corgi-cheer.gif', staticSrc: '/assets/stickers/corgi-cheer.png',
+    animatedSrc: stickerAsset('corgi-cheer.gif'), staticSrc: stickerAsset('corgi-cheer.png'),
     altText: '柯基豆豆双爪举高开心弹跳，表示太棒啦',
     unlockType: 'daily_task', unlockValue: 1,
     owned: true, unlockedAt: '2026-07-28', unlockReason: '完成绘本跟读 I like the sun.',
@@ -66,28 +68,28 @@ export const initialStickers: AnimalSticker[] = [
   {
     id: 'cat-smug', character: 'cat', emotion: 'smug', title: '这题小意思',
     description: '闭眼微笑，得意摇摆。连续答对时使用。',
-    animatedSrc: '/assets/stickers/cat-smug.gif', staticSrc: '/assets/stickers/cat-smug.png',
+    animatedSrc: stickerAsset('cat-smug.gif'), staticSrc: stickerAsset('cat-smug.png'),
     altText: '橘猫橙橙闭眼微笑得意摇摆，表示这题小意思',
     unlockType: 'daily_task', unlockValue: 3, owned: false,
   },
   {
     id: 'rabbit-happy-cry', character: 'rabbit', emotion: 'happy-cry', title: '感动哭了',
     description: '流开心眼泪，双手捧脸。完成复习或描红作品时使用。',
-    animatedSrc: '/assets/stickers/rabbit-happy-cry.gif', staticSrc: '/assets/stickers/rabbit-happy-cry.png',
+    animatedSrc: stickerAsset('rabbit-happy-cry.gif'), staticSrc: stickerAsset('rabbit-happy-cry.png'),
     altText: '垂耳兔点点流着开心眼泪双手捧脸，表示感动哭了',
     unlockType: 'review', owned: false,
   },
   {
     id: 'bear-wow', character: 'bear', emotion: 'wow', title: '哇哦',
     description: '捧脸，惊喜张嘴。掌握新数学知识时使用。',
-    animatedSrc: '/assets/stickers/bear-wow.gif', staticSrc: '/assets/stickers/bear-wow.png',
+    animatedSrc: stickerAsset('bear-wow.gif'), staticSrc: stickerAsset('bear-wow.png'),
     altText: '小熊麦麦捧脸惊喜张嘴，表示哇哦',
     unlockType: 'unit_complete', owned: false,
   },
   {
     id: 'deer-shine', character: 'deer', emotion: 'shine', title: '闪亮登场',
     description: '眼睛闪亮，举手庆祝。连续打卡时使用。',
-    animatedSrc: '/assets/stickers/deer-shine.gif', staticSrc: '/assets/stickers/deer-shine.png',
+    animatedSrc: stickerAsset('deer-shine.gif'), staticSrc: stickerAsset('deer-shine.png'),
     altText: '小鹿森森眼睛闪亮举手庆祝，表示闪亮登场',
     unlockType: 'streak', unlockValue: 6,
     owned: true, unlockedAt: '2026-07-30', unlockReason: '连续打卡 6 天',
@@ -95,7 +97,7 @@ export const initialStickers: AnimalSticker[] = [
   {
     id: 'penguin-dizzy', character: 'penguin', emotion: 'dizzy', title: '开心转圈',
     description: '眼冒星星，左右摇摆。完成英语主题单元时使用。',
-    animatedSrc: '/assets/stickers/penguin-dizzy.gif', staticSrc: '/assets/stickers/penguin-dizzy.png',
+    animatedSrc: stickerAsset('penguin-dizzy.gif'), staticSrc: stickerAsset('penguin-dizzy.png'),
     altText: '企鹅圆圆眼冒星星左右摇摆，表示开心转圈',
     unlockType: 'unit_complete', owned: false,
   },

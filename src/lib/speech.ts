@@ -43,7 +43,8 @@ function stopAudio() {
 }
 function playFile(url: string): Promise<void> {
   return new Promise((resolve) => {
-    const a = new Audio(url);
+    const resolvedUrl = url.startsWith('/') ? `${import.meta.env.BASE_URL}${url.slice(1)}` : url;
+    const a = new Audio(resolvedUrl);
     currentAudio = a;
     let done = false;
     const finish = () => { if (done) return; done = true; if (currentAudio === a) currentAudio = null; resolve(); };
@@ -89,7 +90,7 @@ function playText(text: string, opts?: { lang?: string; rate?: number; pitch?: n
     let rate = opts.rate;
     let pitch = opts.pitch;
     if (lang === undefined) {
-      if (isChinese(text)) lang = 'zh-TW';
+      if (isChinese(text)) lang = 'zh-CN';
       else lang = 'en-US';
     }
     if (rate === undefined) rate = isChinese(text) ? 0.7 : 0.8;
@@ -97,7 +98,7 @@ function playText(text: string, opts?: { lang?: string; rate?: number; pitch?: n
     return webSpeak(text, { lang, rate, pitch });
   }
   // 无 opts 且没预生成音频：自动判别语种用浏览器原生
-  if (isChinese(text)) return webSpeak(text, { lang: 'zh-TW', rate: 0.7, pitch: 1.0 });
+  if (isChinese(text)) return webSpeak(text, { lang: 'zh-CN', rate: 0.7, pitch: 1.0 });
   if (isEnglish(text)) {
     const isSentence = /\s/.test(text.trim());
     return webSpeak(text, { rate: isSentence ? SENTENCE_RATE : WORD_RATE, pitch: 1.1 });
@@ -113,7 +114,7 @@ export function speak(text: string, opts?: { lang?: string; rate?: number; pitch
   playText(text, opts);
 }
 
-/** 自动检测语言并朗读（中文用 zh-TW，英文用 en-US）。优先用预生成 MP3。 */
+/** 自动检测语言并朗读（中文用 zh-CN，英文用 en-US）。优先用预生成 MP3。 */
 export function speakAuto(text: string) {
   playText(text);
 }

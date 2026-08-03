@@ -8,8 +8,8 @@ import clsx from 'clsx';
 type Phase = 'select' | 'play' | 'result';
 
 interface PilotStats {
-  attack: number; // 子彈傷害
-  guard: number; // 護甲 / 減傷
+  attack: number; // 子弹伤害
+  guard: number; // 护甲 / 减伤
   speed: number; // 射速
 }
 
@@ -28,35 +28,35 @@ interface Pilot {
   skill: Skill;
 }
 
-// 8 位貼紙飛行員，沿用原本的角色與數值
+// 8 位贴纸飞行员，沿用原本的角色与数值
 const PILOTS: Pilot[] = [
-  { key: 'corgi',  name: '柯基豆豆', emoji: '🐶', stats: { attack: 8, guard: 6, speed: 9 },  desc: '射速快·火力猛',   skill: { name: '機關槍掃射', emoji: '💥', desc: '短時間射速翻倍' } },
-  { key: 'cat',    name: '橘貓橙橙', emoji: '🐱', stats: { attack: 7, guard: 7, speed: 7 },  desc: '攻防均衡型',     skill: { name: '緊急閃避',   emoji: '🐱', desc: '短時間不受傷' } },
-  { key: 'bear',   name: '小熊咕咕', emoji: '🐻', stats: { attack: 6, guard: 9, speed: 5 },  desc: '護甲最厚·耐打', skill: { name: '裝甲護盾',   emoji: '🛡️', desc: '獲得 40 點護盾' } },
-  { key: 'deer',   name: '小鹿閃閃', emoji: '🦌', stats: { attack: 9, guard: 5, speed: 8 },  desc: '火力最強·爆發高', skill: { name: '雷射狙擊',   emoji: '✨', desc: '立即擊毀一架敵機' } },
-  { key: 'rabbit', name: '兔兔郵差', emoji: '🐰', stats: { attack: 7, guard: 6, speed: 9 },  desc: '速度極快·先手多', skill: { name: '極速射擊',   emoji: '⚡', desc: '連續射出 3 發' } },
-  { key: 'bird',   name: '小鳥啾啾', emoji: '🐦', stats: { attack: 6, guard: 5, speed: 10 }, desc: '速度王·靈活型',   skill: { name: '旋風颶風',   emoji: '🌪️', desc: '全場敵機減半血量' } },
-  { key: 'penguin',name: '企鵝圓圓', emoji: '🐧', stats: { attack: 8, guard: 8, speed: 5 },  desc: '重裝型·攻防兼備', skill: { name: '冰凍力場',   emoji: '❄️', desc: '敵機暫停 3 秒' } },
-  { key: 'lop',    name: '垂耳暖暖', emoji: '🐨', stats: { attack: 7, guard: 7, speed: 7 },  desc: '愛心型·幸運加成', skill: { name: '幸運祝福',   emoji: '💖', desc: '回復 30 點血量' } },
+  { key: 'corgi',  name: '柯基豆豆', emoji: '🐶', stats: { attack: 8, guard: 6, speed: 9 },  desc: '射速快·火力猛',   skill: { name: '机关枪扫射', emoji: '💥', desc: '短时间射速翻倍' } },
+  { key: 'cat',    name: '橘猫橙橙', emoji: '🐱', stats: { attack: 7, guard: 7, speed: 7 },  desc: '攻防均衡型',     skill: { name: '紧急闪避',   emoji: '🐱', desc: '短时间不受伤' } },
+  { key: 'bear',   name: '小熊咕咕', emoji: '🐻', stats: { attack: 6, guard: 9, speed: 5 },  desc: '护甲最厚·耐打', skill: { name: '装甲护盾',   emoji: '🛡️', desc: '获得 40 点护盾' } },
+  { key: 'deer',   name: '小鹿闪闪', emoji: '🦌', stats: { attack: 9, guard: 5, speed: 8 },  desc: '火力最强·爆发高', skill: { name: '激光狙击',   emoji: '✨', desc: '立即击毁一架敌机' } },
+  { key: 'rabbit', name: '兔兔邮差', emoji: '🐰', stats: { attack: 7, guard: 6, speed: 9 },  desc: '速度极快·先手多', skill: { name: '极速射击',   emoji: '⚡', desc: '连续射出 3 发' } },
+  { key: 'bird',   name: '小鸟啾啾', emoji: '🐦', stats: { attack: 6, guard: 5, speed: 10 }, desc: '速度王·灵活型',   skill: { name: '旋风飓风',   emoji: '🌪️', desc: '全场敌机减半血量' } },
+  { key: 'penguin',name: '企鹅圆圆', emoji: '🐧', stats: { attack: 8, guard: 8, speed: 5 },  desc: '重装型·攻防兼备', skill: { name: '冰冻力场',   emoji: '❄️', desc: '敌机暂停 3 秒' } },
+  { key: 'lop',    name: '垂耳暖暖', emoji: '🐨', stats: { attack: 7, guard: 7, speed: 7 },  desc: '爱心型·幸运加成', skill: { name: '幸运祝福',   emoji: '💖', desc: '回复 30 点血量' } },
 ];
 
-const ENEMY_NAMES = ['暗影戰機', '火焰飛龍', '冰霜巨人', '雷電風暴', '森林守護者', '深海漩渦'];
+const ENEMY_NAMES = ['暗影战机', '火焰飞龙', '冰霜巨人', '雷电风暴', '森林守护者', '深海漩涡'];
 const ENEMY_CHARS: AvatarKey[] = ['corgi', 'cat', 'bear', 'deer', 'rabbit', 'bird', 'penguin', 'lop'];
 
-// ---------- 滿屏方陣設定 ----------
+// ---------- 满屏方阵设定 ----------
 const GRID_COLS = 10;
 const GRID_ROWS = 10;
 const TOTAL_PLANES = GRID_COLS * GRID_ROWS; // 100 台
-const DESCEND_RATE = 0.05;   // 方陣每 tick 下壓幅度（百分比）
-const SWAY_RATE = 0.22;      // 方陣左右擺動幅度（百分比）
-const SWAY_LIMIT = 7;        // 擺動邊界
-const LOSE_LINE = 82;        // 敵機壓到這條線就輸
+const DESCEND_RATE = 0.05;   // 方阵每 tick 下压幅度（百分比）
+const SWAY_RATE = 0.22;      // 方阵左右摆动幅度（百分比）
+const SWAY_LIMIT = 7;        // 摆动边界
+const LOSE_LINE = 82;        // 敌机压到这条线就输
 
 function colX(c: number) { return 6 + (c * (88 / (GRID_COLS - 1))); }   // 6% ~ 94%
 function baseRowY(r: number) { return 9 + r * 3.9; }                     // 9% ~ 44.1%
 
 function isEliteCell(row: number, col: number) {
-  // 6 個精英機（⭐）分散在方陣四角與中段，會向下反擊
+  // 6 个精英机（⭐）分散在方阵四角与中段，会向下反击
   return (
     (row === 0 && (col === 0 || col === 9)) ||
     (row === 9 && (col === 0 || col === 9)) ||
@@ -64,10 +64,10 @@ function isEliteCell(row: number, col: number) {
   );
 }
 
-// ---------- 遊戲內部狀態 ----------
+// ---------- 游戏内部状态 ----------
 interface Enemy {
   id: number;
-  x: number;       // 0~100 百分比（由方陣格 + 偏移計算後填入）
+  x: number;       // 0~100 百分比（由方阵格 + 偏移计算后填入）
   y: number;       // 0~100 百分比
   hp: number;
   maxHp: number;
@@ -81,7 +81,7 @@ interface Bullet {
   id: number;
   x: number;
   y: number;
-  targetId: number; // -1 = 直上（方陣普通子彈）；>=0 = 追蹤（技能）
+  targetId: number; // -1 = 直上（方阵普通子弹）；>=0 = 追踪（技能）
   dmg: number;
 }
 interface EnemyBullet {
@@ -107,8 +107,8 @@ interface GameState {
   freezeUntil: number;
   finished: boolean;
   nextId: number;
-  formationY: number;  // 方陣下壓偏移
-  formationX: number;  // 方陣左右偏移
+  formationY: number;  // 方阵下压偏移
+  formationX: number;  // 方阵左右偏移
   formationDir: number;
 }
 
@@ -166,7 +166,7 @@ export function BattlePage() {
     setHpView(100);
     setShieldView(0);
 
-    // 擺好 100 台敵機方陣
+    // 摆好 100 台敌机方阵
     const enemies: Enemy[] = [];
     let id = 1;
     for (let row = 0; row < GRID_ROWS; row++) {
@@ -230,12 +230,12 @@ export function BattlePage() {
     force();
   };
 
-  // 直上子彈：依等級散射（多發），不追蹤，靠通道碰撞打中同列敵機
+  // 直上子弹：依等级散射（多发），不追踪，靠通道碰撞打中同列敌机
   const fireStraight = () => {
     const g = game.current;
     if (!pilot) return;
     const lvl = bulletLevelOf(g.kills);
-    const count = lvl; // 1~5 發
+    const count = lvl; // 1~5 发
     const baseDmg = pilot.stats.attack + Math.floor(studyBonus / 2) + (lvl - 1) * 3;
     const span = 22;
     for (let i = 0; i < count; i++) {
@@ -244,7 +244,7 @@ export function BattlePage() {
     }
   };
 
-  // 手動點擊：飛機飛向點的位置並射一輪
+  // 手动点击：飞机飞向点的位置并射一轮
   const manualFire = (clientX?: number, rect?: DOMRect | null) => {
     const g = game.current;
     if (g.finished) return;
@@ -255,7 +255,7 @@ export function BattlePage() {
     force();
   };
 
-  // 主遊戲循環
+  // 主游戏循环
   useEffect(() => {
     if (phase !== 'play') return;
     const iv = setInterval(() => {
@@ -263,7 +263,7 @@ export function BattlePage() {
       if (g.finished || !pilot) return;
       const now = Date.now();
 
-      // 結算
+      // 结算
       if (g.playerHp <= 0) {
         g.finished = true; setResult('lose'); setPhase('result'); finishBattle('lose'); return;
       }
@@ -274,7 +274,7 @@ export function BattlePage() {
       const frozen = now < g.freezeUntil;
       const dmgReduce = Math.floor(pilot.stats.guard / 5);
 
-      // 飛機平滑移動
+      // 飞机平滑移动
       if (Math.abs(g.playerX - g.playerXTarget) > 0.5) {
         g.playerX += (g.playerXTarget - g.playerX) * 0.18;
       } else {
@@ -282,25 +282,25 @@ export function BattlePage() {
       }
 
       if (!frozen) {
-        // 方陣整體擺動 + 緩緩下壓
+        // 方阵整体摆动 + 缓缓下压
         g.formationX += g.formationDir * SWAY_RATE;
         if (g.formationX > SWAY_LIMIT) { g.formationX = SWAY_LIMIT; g.formationDir = -1; }
         else if (g.formationX < -SWAY_LIMIT) { g.formationX = -SWAY_LIMIT; g.formationDir = 1; }
         g.formationY += DESCEND_RATE;
 
-        // 更新每架敵機座標
+        // 更新每架敌机座标
         let lowestY = 0;
         for (const e of g.enemies) {
           e.x = clamp(colX(e.col) + g.formationX, 2, 98);
           e.y = baseRowY(e.row) + g.formationY;
           if (e.y > lowestY) lowestY = e.y;
         }
-        // 敵機壓到我頭上 → 直接落敗
+        // 敌机压到我头上 → 直接落败
         if (lowestY >= LOSE_LINE) {
           g.finished = true; setResult('lose'); setPhase('result'); finishBattle('lose'); return;
         }
 
-        // 精英機向下反擊
+        // 精英机向下反击
         const enemyBulletDmg = 7;
         for (const e of g.enemies) {
           if (e.elite && now > e.lastShot) {
@@ -310,17 +310,17 @@ export function BattlePage() {
         }
       }
 
-      // 自動開火（直上散射）
+      // 自动开火（直上散射）
       const interval = (now < g.fireBoostUntil ? 200 : 600 - pilot.stats.speed * 38);
       if (now - g.lastFire > interval) {
         g.lastFire = now;
         fireStraight();
       }
 
-      // 子彈移動 + 碰撞
+      // 子弹移动 + 碰撞
       g.bullets = g.bullets.filter(b => {
         if (b.targetId >= 0) {
-          // 追蹤型（技能子彈）
+          // 追踪型（技能子弹）
           const t = g.enemies.find(e => e.id === b.targetId);
           if (!t) { b.y -= 7; return b.y > 0; }
           const dx = t.x - b.x, dy = t.y - b.y;
@@ -333,7 +333,7 @@ export function BattlePage() {
           b.x += (dx / dist) * 7; b.y += (dy / dist) * 7;
           return true;
         }
-        // 直上型：命中同通道（x 接近）且在本格附近的敵機
+        // 直上型：命中同通道（x 接近）且在本格附近的敌机
         b.y -= 7;
         if (b.y < 0) return false;
         let hit: Enemy | null = null, bestY = -999;
@@ -350,13 +350,13 @@ export function BattlePage() {
         return true;
       });
 
-      // 敵方反擊彈下移
+      // 敌方反击弹下移
       g.enemyBullets = g.enemyBullets.filter(eb => {
         eb.y += 2.6;
         if (eb.y >= 84) {
           if (Math.abs(eb.x - g.playerX) < 7) {
             const dmg = eb.dmg;
-            if (now < g.invulnUntil) { /* 免傷 */ }
+            if (now < g.invulnUntil) { /* 免伤 */ }
             else if (g.playerShield > 0) {
               const absorbed = Math.min(g.playerShield, dmg);
               g.playerShield -= absorbed; setShieldView(g.playerShield);
@@ -378,7 +378,7 @@ export function BattlePage() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [phase, pilot, studyBonus]);
 
-  // 鍵盤控制
+  // 键盘控制
   useEffect(() => {
     if (phase !== 'play') return;
     const onKey = (e: KeyboardEvent) => {
@@ -411,7 +411,7 @@ export function BattlePage() {
     if (res === 'win') {
       const stickers = ['corgi-cheer', 'bear-wow', 'deer-shine', 'cat-smug'];
       const sid = stickers[Math.floor(Math.random() * stickers.length)];
-      award(sid, '飛機大戰勝利', 'daily_task').catch(() => {});
+      award(sid, '飞机大战胜利', 'daily_task').catch(() => {});
     }
   };
 
@@ -422,28 +422,28 @@ export function BattlePage() {
     setShowRecords(false);
   };
 
-  // ---- 選機階段 ----
+  // ---- 选机阶段 ----
   if (phase === 'select') {
     return (
       <div className="container-forest pt-6">
         <header className="card-leaf p-5 flex flex-col md:flex-row md:items-center gap-4">
           <div className="text-6xl">✈️</div>
           <div className="flex-1 min-w-0">
-            <h1 className="type-h1">飛機大戰 · 百機方陣 ✈️</h1>
-            <p className="type-body text-forest-700/90 mt-1">選擇你的貼紙飛行員，擊落天上 <b>100 台</b> 敵機方陣！方陣會整體緩緩下壓，別讓它壓到你頭上。點畫面左右移動飛機、連續擊落會讓子彈升級（散射更多）。今天完成 {doneTasks} 個任務，火力加成 +{studyBonus}。</p>
+            <h1 className="type-h1">飞机大战 · 百机方阵 ✈️</h1>
+            <p className="type-body text-forest-700/90 mt-1">选择你的贴纸飞行员，击落天上 <b>100 台</b> 敌机方阵！方阵会整体缓缓下压，别让它压到你头上。点画面左右移动飞机、连续击落会让子弹升级（散射更多）。今天完成 {doneTasks} 个任务，火力加成 +{studyBonus}。</p>
           </div>
           {battleRecords.length > 0 && (
             <button onClick={() => setShowRecords(!showRecords)} className="btn-ghost tap whitespace-nowrap">
-              📊 戰績 {wins}勝{losses}負
+              📊 战绩 {wins}胜{losses}负
             </button>
           )}
         </header>
 
         {showRecords && (
           <section className="mt-4 card p-5 animate-pop">
-            <h2 className="type-h2 mb-3">📊 對戰記錄（勝率 {winRate}%）</h2>
+            <h2 className="type-h2 mb-3">📊 对战记录（胜率 {winRate}%）</h2>
             {battleRecords.length === 0 ? (
-              <p className="text-forest-600/80">還沒有對戰記錄，快去打一場吧！</p>
+              <p className="text-forest-600/80">还没有对战记录，快去打一场吧！</p>
             ) : (
               <div className="space-y-2 max-h-64 overflow-y-auto">
                 {battleRecords.map(r => (
@@ -465,7 +465,7 @@ export function BattlePage() {
         )}
 
         <section className="mt-6">
-          <h2 className="type-h2 mb-3">選擇你的飛行員</h2>
+          <h2 className="type-h2 mb-3">选择你的飞行员</h2>
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
             {PILOTS.map(t => (
               <button
@@ -495,23 +495,23 @@ export function BattlePage() {
     );
   }
 
-  // ---- 對戰階段 ----
+  // ---- 对战阶段 ----
   if (phase === 'play' && pilot) {
     const g = game.current;
     const remaining = g.enemies.length;
     return (
       <div className="container-forest pt-4">
-        {/* 頂部狀態條 */}
+        {/* 顶部状态条 */}
         <div className="flex items-center gap-3 mb-3">
           <button onClick={() => { game.current.finished = true; setResult('lose'); setPhase('result'); finishBattle('lose'); }} className="btn-ghost tap text-sm">🚪 撤退</button>
           <div className="flex-1 text-center text-sm text-forest-600">
-            擊落 <span className="font-display font-bold text-forest-800">{g.kills}</span> / 剩餘敵機 <span className="font-display font-bold text-forest-800">{remaining}</span>
-            <span className="ml-2 inline-block px-2 py-0.5 rounded-full bg-sun-400/20 text-soil-600 text-xs font-display font-bold">子彈 Lv.{bulletLevelOf(g.kills)}</span>
+            击落 <span className="font-display font-bold text-forest-800">{g.kills}</span> / 剩余敌机 <span className="font-display font-bold text-forest-800">{remaining}</span>
+            <span className="ml-2 inline-block px-2 py-0.5 rounded-full bg-sun-400/20 text-soil-600 text-xs font-display font-bold">子弹 Lv.{bulletLevelOf(g.kills)}</span>
           </div>
-          <button onClick={() => setShowRecords(false)} className="text-xs text-forest-400">✈️ 飛機大戰</button>
+          <button onClick={() => setShowRecords(false)} className="text-xs text-forest-400">✈️ 飞机大战</button>
         </div>
 
-        {/* 天空戰場 */}
+        {/* 天空战场 */}
         <div
           ref={fieldRef}
           onClick={(e) => {
@@ -521,17 +521,17 @@ export function BattlePage() {
           className="relative w-full max-w-2xl mx-auto h-[62vh] rounded-barn overflow-hidden bg-gradient-to-b from-sky-300 via-sky-200 to-cream-100 ring-2 ring-sky-300 select-none touch-manipulation cursor-pointer"
           style={{ touchAction: 'manipulation' }}
         >
-          {/* 雲朵裝飾 */}
+          {/* 云朵装饰 */}
           <div className="absolute top-6 left-6 text-3xl opacity-70 pointer-events-none">☁️</div>
           <div className="absolute top-16 right-10 text-2xl opacity-60 pointer-events-none">☁️</div>
           <div className="absolute top-32 left-1/3 text-2xl opacity-50 pointer-events-none">☁️</div>
 
-          {/* 危險線 */}
+          {/* 危险线 */}
           <div className="absolute inset-x-0 pointer-events-none" style={{ top: `${LOSE_LINE}%` }}>
             <div className="border-t-2 border-dashed border-rose-400/70" />
           </div>
 
-          {/* 敵機方陣 */}
+          {/* 敌机方阵 */}
           {g.enemies.map(e => (
             <div
               key={e.id}
@@ -546,7 +546,7 @@ export function BattlePage() {
             </div>
           ))}
 
-          {/* 我方子彈 */}
+          {/* 我方子弹 */}
           {g.bullets.map(b => (
             <div
               key={b.id}
@@ -555,7 +555,7 @@ export function BattlePage() {
             />
           ))}
 
-          {/* 敵方反擊彈 */}
+          {/* 敌方反击弹 */}
           {g.enemyBullets.map(eb => (
             <div
               key={eb.id}
@@ -564,7 +564,7 @@ export function BattlePage() {
             />
           ))}
 
-          {/* 玩家飛機 */}
+          {/* 玩家飞机 */}
           <div className="absolute bottom-3 -translate-x-1/2 flex flex-col items-center" style={{ left: `${g.playerX}%` }}>
             <div className="w-12"><Mascot name={pilot.key} size={48} withShadow={false} /></div>
             <div className="text-3xl drop-shadow -mt-1">🚀</div>
@@ -572,14 +572,14 @@ export function BattlePage() {
 
           {/* 操作提示 */}
           <div className="absolute inset-x-0 bottom-1 text-center text-[11px] text-forest-600/70 pointer-events-none">
-            點畫面飛過去並射擊 · 鍵盤 ← → 移動 ✨
+            点画面飞过去并射击 · 键盘 ← → 移动 ✨
           </div>
         </div>
 
-        {/* 玩家狀態 + 技能 */}
+        {/* 玩家状态 + 技能 */}
         <div className="mt-3 max-w-2xl mx-auto flex items-center gap-3">
           <div className="flex-1">
-            <div className="text-xs text-forest-600 mb-1">我方機體血量</div>
+            <div className="text-xs text-forest-600 mb-1">我方机体血量</div>
             <div className="h-5 rounded-full bg-cream-200 overflow-hidden ring-1 ring-forest-200">
               <div className="h-full bg-gradient-to-r from-forest-500 to-forest-400 transition-all duration-300 flex items-center justify-center text-[10px] text-cream-50 font-bold" style={{ width: `${hpView}%` }}>
                 {hpView}
@@ -604,7 +604,7 @@ export function BattlePage() {
     );
   }
 
-  // ---- 結果階段 ----
+  // ---- 结果阶段 ----
   if (phase === 'result' && result && pilot) {
     const coins = result === 'win' ? 30 + studyBonus : 5;
     return (
@@ -612,31 +612,31 @@ export function BattlePage() {
         <div className={clsx('card-leaf p-8 text-center max-w-md w-full animate-pop', result === 'win' && 'ring-4 ring-sun-400/50')}>
           <div className="text-6xl mb-3">{result === 'win' ? '🏆' : '💪'}</div>
           <h1 className={clsx('type-h1', result === 'win' ? 'text-sun-600' : 'text-forest-700')}>
-            {result === 'win' ? '百機全滅！' : '方陣壓境…'}
+            {result === 'win' ? '百机全灭！' : '方阵压境…'}
           </h1>
           <p className="type-body text-forest-700 mt-2">
-            {pilot.name} {result === 'win' ? '成功擊落了全部 100 台' : '不敵'} {enemyName} 敵機方陣
+            {pilot.name} {result === 'win' ? '成功击落了全部 100 台' : '不敌'} {enemyName} 敌机方阵
           </p>
-          <div className="mt-2 text-sm text-forest-600">本次擊落 <span className="font-display font-bold text-forest-800">{game.current.kills}</span> 架</div>
+          <div className="mt-2 text-sm text-forest-600">本次击落 <span className="font-display font-bold text-forest-800">{game.current.kills}</span> 架</div>
           <div className="mt-4 inline-flex items-center gap-2 px-4 py-2 rounded-barn bg-sun-400/20">
             <span className="text-2xl">🪙</span>
-            <span className="font-display font-bold text-soil-700">+{coins} 金幣</span>
+            <span className="font-display font-bold text-soil-700">+{coins} 金币</span>
           </div>
           {result === 'win' && (
-            <p className="text-sm text-forest-600/80 mt-3">🎉 還獲得了一張隨機貼紙獎勵！</p>
+            <p className="text-sm text-forest-600/80 mt-3">🎉 还获得了一张随机贴纸奖励！</p>
           )}
           {skillUsed && (
-            <p className="text-xs text-sun-600 mt-2">🔥 本場使用了技能「{pilot.skill.name}」</p>
+            <p className="text-xs text-sun-600 mt-2">🔥 本场使用了技能「{pilot.skill.name}」</p>
           )}
           <div className="mt-4 flex justify-center gap-4 text-sm">
-            <span className="text-forest-600">累計 {battleRecords.length} 場</span>
-            <span className="text-sun-600 font-bold">{wins}勝</span>
-            <span className="text-forest-500">{losses}負</span>
-            <span className="text-forest-600">勝率 {winRate}%</span>
+            <span className="text-forest-600">累计 {battleRecords.length} 场</span>
+            <span className="text-sun-600 font-bold">{wins}胜</span>
+            <span className="text-forest-500">{losses}负</span>
+            <span className="text-forest-600">胜率 {winRate}%</span>
           </div>
           <div className="mt-6 flex flex-col gap-3">
-            <button onClick={reset} className="btn-primary-lg tap">🔄 再戰一場</button>
-            <button onClick={() => nav('/')} className="btn-ghost tap">返回首頁</button>
+            <button onClick={reset} className="btn-primary-lg tap">🔄 再战一场</button>
+            <button onClick={() => nav('/')} className="btn-ghost tap">返回首页</button>
           </div>
         </div>
       </div>
