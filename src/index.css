@@ -167,12 +167,22 @@
   .grade-card-active { @apply bg-sun-400/20 ring-2 ring-sun-500 shadow-soft; }
   .grade-picker-featured { @apply rounded-[28px] bg-cream-50/95 shadow-lift ring-2 ring-sun-400/60 backdrop-blur; }
   .grade-picker-heading { @apply bg-gradient-to-r from-sun-400/20 via-white/30 to-sky-100/70; }
-  .music-toggle { @apply fixed bottom-[5.8rem] right-4 z-50 flex min-h-[58px] items-center gap-2 rounded-full bg-white/95 py-2 pl-2 pr-4 text-left text-forest-800 shadow-lift ring-2 ring-sky-200 backdrop-blur transition hover:-translate-y-0.5 hover:ring-sky-400 md:bottom-5 md:right-5; }
+  .music-widget { @apply fixed bottom-[5.8rem] right-4 z-50 flex flex-col items-center md:bottom-5 md:right-5; }
+  .music-toggle { @apply flex min-h-[58px] items-center gap-2 rounded-full bg-white/95 py-2 pl-2 pr-4 text-left text-forest-800 shadow-lift ring-2 ring-sky-200 backdrop-blur transition hover:-translate-y-0.5 hover:ring-sky-400; }
   .music-toggle-playing { @apply ring-forest-300; }
   .music-note { @apply grid h-10 w-10 shrink-0 place-items-center rounded-full bg-sky-100 text-2xl text-sky-600; }
   .music-toggle-playing .music-note { @apply bg-forest-100 text-forest-700; animation: musicPulse 1.15s ease-in-out infinite; }
   .music-toggle strong { @apply block whitespace-nowrap font-display text-sm; }
   .music-toggle small { @apply block whitespace-nowrap text-[11px] text-forest-500; }
+  .music-credit { @apply mt-1 rounded-full bg-white/90 px-2 py-0.5 text-[9px] text-forest-500 shadow-sm; }
+  .music-credit a { @apply underline underline-offset-2 hover:text-forest-700; }
+  .supplied-sticker-album { @apply rounded-[28px] bg-gradient-to-br from-[#fff0f6]/95 to-[#edf9ff]/95 p-5 shadow-soft ring-1 ring-white/90 sm:p-6; }
+  .supplied-sticker-card { @apply relative overflow-hidden rounded-pebble bg-white p-2 shadow-soft ring-1 ring-[#f2c9dc] transition hover:-translate-y-1 hover:shadow-lift; }
+  .supplied-sticker-card img { @apply aspect-[5/3] w-full rounded-barn object-cover; }
+  .supplied-sticker-card > span { @apply block px-2 pb-1 pt-3; }
+  .supplied-sticker-card strong { @apply block font-display text-lg text-forest-800; }
+  .supplied-sticker-card small { @apply mt-0.5 block text-sm text-forest-500; }
+  .supplied-sticker-card > b { @apply absolute right-4 top-4 rounded-full bg-white/90 px-2 py-1 text-xs text-[#a6456d] shadow-sm; }
   .side-shortcut { @apply flex flex-col items-center gap-1 rounded-barn py-2 text-xl text-forest-700 hover:bg-sky-100/60; }
   .side-shortcut small { @apply text-[10px] font-semibold; }
   .lesson-focus-header { @apply mx-auto flex w-full max-w-4xl items-center gap-4 rounded-barn bg-white/90 px-3 py-2.5 ring-1 ring-sky-200 shadow-soft backdrop-blur; }

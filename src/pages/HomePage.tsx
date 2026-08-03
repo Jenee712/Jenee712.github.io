@@ -107,7 +107,7 @@ export function HomePage() {
           <StickerCrop sheet="pink" position="50% 82%" label="粉色小兔贴纸" />
           <StickerCrop sheet="snack" position="40% 18%" label="冰淇淋贴纸" />
         </div>
-        <button className="sticker-album-link" onClick={() => navigate('/album')}>打开贴纸册 <span aria-hidden>→</span></button>
+        <button className="sticker-album-link" onClick={() => navigate('/album?tab=stickers')}>打开贴纸册 <span aria-hidden>→</span></button>
       </section>
 
       <section className="journey-card mt-5" aria-labelledby="next-task-heading">

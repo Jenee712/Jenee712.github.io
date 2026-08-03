@@ -5,11 +5,13 @@ import { Mascot } from '@/components/characters/Mascot';
 import { KnowledgeCollection } from '@/components/ui/KnowledgeCollection';
 import { StickerAlbum } from '@/components/stickers/StickerAlbum';
 import { PortfolioCard } from '@/components/ui/PortfolioCard';
+import { useSearchParams } from 'react-router-dom';
 
 type Tab = 'knowledge' | 'stickers' | 'works' | 'milestones';
 
 export function GrowthAlbumPage() {
-  const [tab, setTab] = useState<Tab>('knowledge');
+  const [searchParams] = useSearchParams();
+  const [tab, setTab] = useState<Tab>(() => searchParams.get('tab') === 'stickers' ? 'stickers' : 'knowledge');
   const stickers = useAppStore((s) => s.stickers);
   const knowledge = useAppStore((s) => s.knowledge);
   const portfolio = useAppStore((s) => s.portfolio);
@@ -55,7 +57,15 @@ export function GrowthAlbumPage() {
 
       <div className="mt-5">
         {tab === 'knowledge' && <KnowledgeCollection collection={knowledge} />}
-        {tab === 'stickers' && <StickerAlbum stickers={stickers} />}
+        {tab === 'stickers' && (
+          <div className="space-y-5">
+            <SuppliedStickerCollection />
+            <section>
+              <h2 className="type-h2 mb-3">森林动物贴纸</h2>
+              <StickerAlbum stickers={stickers} />
+            </section>
+          </div>
+        )}
         {tab === 'works' && (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
             {portfolio.map((p) => <PortfolioCard key={p.id} item={p} />)}
@@ -64,6 +74,38 @@ export function GrowthAlbumPage() {
         {tab === 'milestones' && <Milestones kid={kid} />}
       </div>
     </div>
+  );
+}
+
+function SuppliedStickerCollection() {
+  const base = import.meta.env.BASE_URL;
+  const sheets = [
+    { file: 'garden-friends.jpg', title: '花园好朋友', detail: '花朵、蝴蝶和可爱动物' },
+    { file: 'birthday-party.jpg', title: '生日派对', detail: '礼物、蛋糕、气球和祝福' },
+    { file: 'pink-buddies.jpg', title: '粉色伙伴', detail: '小兔、小熊、蝴蝶结和爱心' },
+    { file: 'snack-time.jpg', title: '点心补给站', detail: '冰淇淋、饼干和早餐点心' },
+  ];
+
+  return (
+    <section className="supplied-sticker-album" aria-labelledby="supplied-stickers-heading">
+      <div>
+        <span className="sticker-kicker">NEW · 你上传的贴纸</span>
+        <h2 id="supplied-stickers-heading" className="mt-2 type-h2">小易设计贴纸</h2>
+        <p className="mt-1 text-sm text-forest-600">四套原始贴纸已经完整放入贴纸册，点击图片可以查看大图。</p>
+      </div>
+      <div className="mt-4 grid gap-4 sm:grid-cols-2">
+        {sheets.map((sheet) => {
+          const src = `${base}assets/sticker-sheets/${sheet.file}`;
+          return (
+            <a key={sheet.file} href={src} target="_blank" rel="noreferrer" className="supplied-sticker-card">
+              <img src={src} alt={`${sheet.title}贴纸整版`} loading="lazy" />
+              <span><strong>{sheet.title}</strong><small>{sheet.detail}</small></span>
+              <b aria-hidden>放大 ↗</b>
+            </a>
+          );
+        })}
+      </div>
+    </section>
   );
 }
 
