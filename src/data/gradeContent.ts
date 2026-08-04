@@ -148,11 +148,11 @@ function buildEnglishUnits(grade: GradeKey): Unit[] {
       subject: 'english',
       title: isAbcStart ? `${def.label} · ABC 字母启蒙` : `${def.label} · ${t.title}`,
       subtitle: def.tagline,
-      storyTask: isAbcStart ? '和小鹿用9天收集 A 到 Z 字母果实' : `在森林里练习「${t.title}」，帮小鹿收集星星`,
+      storyTask: isAbcStart ? '和小鹿一篇一篇收集 A 到 Z 的26个字母果实' : `在森林里练习「${t.title}」，帮小鹿收集星星`,
       goals: isAbcStart ? [
         '认识 A–Z 26个字母的大小写',
-        '每天跟读3个字母和示例词',
-        '完成点选、描红与跟读',
+        '完成26篇独立字母小课',
+        '每篇完成大小写辨认、描写与跟读',
       ] : [
         `认识 ${def.label} 程度的${t.title}内容`,
         '听音辨形，开口跟读',
@@ -161,7 +161,7 @@ function buildEnglishUnits(grade: GradeKey): Unit[] {
       progress: 0,
       current: i === 0,
       done: false,
-      lessons: isAbcStart ? 27 : 3,
+      lessons: isAbcStart ? 26 : 3,
       trackKey: t.key,
     };
   });
@@ -176,15 +176,16 @@ function buildEnglishLessons(grade: GradeKey): Lesson[] {
   ENG_TRACKS.forEach((t, ti) => {
     if (grade === 'L1' && t.key === 'letter_sound') {
       ALPHABET_LETTERS.forEach((item, letterIndex) => {
-        const day = Math.floor(letterIndex / 3) + 1;
         const dayStart = Math.min(23, Math.floor(letterIndex / 3) * 3);
-        const choices = ALPHABET_LETTERS.slice(dayStart, dayStart + 3).map((letter) => letter.upper);
+        const group = ALPHABET_LETTERS.slice(dayStart, dayStart + 3);
+        const choices = group.map((letter) => letter.upper);
+        const lowerChoices = group.map((letter) => letter.lower);
         idx += 1;
         lessons.push({
           id: alphabetLessonId(item.upper),
           index: idx,
-          title: `第${day}天 · 认识字母 ${item.upper} ${item.lower}`,
-          durationMin: 5,
+          title: `字母 ${item.upper} ${item.lower} · ${item.word}`,
+          durationMin: 7,
           kind: 'letter_trace',
           steps: [
             {
@@ -196,9 +197,23 @@ function buildEnglishLessons(grade: GradeKey): Lesson[] {
               hint: `看看字母卡上的 ${item.upper}`,
             },
             {
+              id: `${alphabetLessonId(item.upper)}-choose-lower`,
+              prompt: `找到 ${item.upper} 对应的小写字母`,
+              answer: item.lower,
+              choices: lowerChoices,
+              ui: 'tap_choice',
+              hint: `${item.upper} 的小写是 ${item.lower}`,
+            },
+            {
               id: `${alphabetLessonId(item.upper)}-trace`,
-              prompt: `用手指描一描 ${item.upper}`,
+              prompt: `用手指描一描大写 ${item.upper}`,
               answer: item.upper,
+              ui: 'trace_letter',
+            },
+            {
+              id: `${alphabetLessonId(item.upper)}-trace-lower`,
+              prompt: `再描一描小写 ${item.lower}`,
+              answer: item.lower,
               ui: 'trace_letter',
             },
             {

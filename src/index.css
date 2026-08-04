@@ -258,7 +258,7 @@
 .alphabet-day-tab b { color: #244d30; font-family: 'Baloo 2', sans-serif; font-size: 1rem; letter-spacing: .08em; }
 .alphabet-day-tab-active { border-color: #e5a52a; background: #fff2c9; box-shadow: 0 4px 0 rgba(175, 110, 55, .12); }
 .alphabet-grid { position: relative; z-index: 1; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1rem; margin-top: 1.2rem; }
-.letter-card { display: grid; grid-template-columns: auto minmax(80px, 1fr); grid-template-rows: 1fr auto; align-items: center; gap: .45rem .75rem; min-height: 210px; padding: 1rem; border: 3px solid transparent; border-radius: 26px; box-shadow: 0 8px 0 rgba(69, 89, 63, .1); text-align: left; transition: transform .18s ease, box-shadow .18s ease, border-color .18s ease; }
+.letter-card { display: grid; grid-template-columns: auto minmax(80px, 1fr); grid-template-rows: 1fr auto auto; align-items: center; gap: .45rem .75rem; min-height: 245px; padding: 1rem; border: 3px solid transparent; border-radius: 26px; box-shadow: 0 8px 0 rgba(69, 89, 63, .1); text-align: left; transition: transform .18s ease, box-shadow .18s ease, border-color .18s ease; }
 .letter-card:hover { transform: translateY(-4px) rotate(-.5deg); box-shadow: 0 13px 0 rgba(69, 89, 63, .09); }
 .letter-card:focus-visible { outline: 4px solid rgba(59, 130, 246, .35); outline-offset: 3px; }
 .letter-card-active { border-color: rgba(62, 134, 71, .55); }
@@ -275,6 +275,9 @@
 .letter-word b { font-family: 'Baloo 2', sans-serif; font-size: 1.45rem; }
 .letter-word small { margin-top: .2rem; color: #647b67; font-size: .82rem; font-weight: 700; }
 .letter-listen { justify-self: end; padding: .42rem .62rem; border-radius: 999px; background: rgba(255,255,255,.78); color: #52705a; font-size: .72rem; font-weight: 800; white-space: nowrap; }
+.letter-open-lesson { grid-column: 1 / -1; display: flex; width: 100%; align-items: center; justify-content: center; gap: .35rem; padding: .65rem .8rem; border-radius: 16px; background: #39743b; color: white; font-size: .82rem; font-weight: 800; box-shadow: 0 4px 0 rgba(35, 82, 42, .18); transition: transform .15s ease, background .15s ease; }
+.letter-open-lesson:hover { transform: translateY(-2px); background: #2f6433; }
+.letter-open-lesson:focus-visible, .letter-listen:focus-visible { outline: 3px solid rgba(59, 130, 246, .38); outline-offset: 2px; }
 .alphabet-tip { position: relative; z-index: 1; display: flex; align-items: center; gap: .65rem; margin-top: 1rem; padding: .8rem 1rem; border-radius: 18px; background: rgba(255,255,255,.72); color: #4c6c53; font-size: .9rem; }
 .alphabet-tip > span { font-size: 1.6rem; }
 
@@ -291,7 +294,7 @@
   .alphabet-badge { width: 62px; height: 62px; border-width: 3px; font-size: 1.25rem; }
   .alphabet-day-tabs { grid-template-columns: repeat(9, 74px); }
   .alphabet-grid { grid-template-columns: 1fr; gap: .75rem; }
-  .letter-card { grid-template-columns: 88px minmax(86px, 1fr) auto; grid-template-rows: 1fr; min-height: 132px; padding: .8rem; }
+  .letter-card { grid-template-columns: 88px minmax(86px, 1fr) auto; grid-template-rows: 1fr auto; min-height: 188px; padding: .8rem; }
   .letter-pair { align-self: center; }
   .letter-pair b { font-size: 3.4rem; }
   .letter-pair small { font-size: 1.9rem; }
