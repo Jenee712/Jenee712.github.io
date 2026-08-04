@@ -5,6 +5,7 @@ import { Mascot } from '@/components/characters/Mascot';
 import { Tree, Flower, Cloud } from '@/components/decor/ForestDecor';
 
 const items = [
+  { to: '/english/books', label: '绘本馆', emoji: '📖' },
   { to: '/',         label: '首页',     emoji: '🏡', end: true },
   { to: '/english',  label: '英语',     emoji: '🔤', end: true },
   { to: '/math',     label: '数学',     emoji: '🥕' },
@@ -43,12 +44,7 @@ export function Sidebar() {
       </nav>
 
       <div className="text-[11px] tracking-[0.18em] text-forest-500 px-2 mt-6 mb-2">森林乐园</div>
-      <div className="grid grid-cols-4 gap-0 px-1">
-        <NavLink
-          to="/english/books"
-          className={({ isActive }) => clsx('side-shortcut', isActive && 'bg-sky-100/80')}
-          aria-label="绘本馆"
-        ><span>📖</span><small>绘本</small></NavLink>
+      <div className="grid grid-cols-3 gap-1 px-1">
         <NavLink to="/board" className="side-shortcut" aria-label="森林棋盘"><span>🗺️</span><small>棋盘</small></NavLink>
         <NavLink to="/album" className="side-shortcut" aria-label="成长图鉴"><span>🐰</span><small>图鉴</small></NavLink>
         <NavLink to="/battle" className="side-shortcut" aria-label="飞机大战"><span>🛩️</span><small>游戏</small></NavLink>
