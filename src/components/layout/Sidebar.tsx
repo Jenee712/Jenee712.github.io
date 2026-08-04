@@ -6,7 +6,8 @@ import { Tree, Flower, Cloud } from '@/components/decor/ForestDecor';
 
 const items = [
   { to: '/',         label: '首页',     emoji: '🏡', end: true },
-  { to: '/english',  label: '英语',     emoji: '🔤' },
+  { to: '/english',  label: '英语',     emoji: '🔤', end: true },
+  { to: '/english/books', label: '绘本馆', emoji: '📖' },
   { to: '/math',     label: '数学',     emoji: '🥕' },
   { to: '/chinese',  label: '语文',     emoji: '📚' },
   { to: '/roadmap',  label: '60 天航线', emoji: '✈️' },
