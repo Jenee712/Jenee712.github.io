@@ -12,6 +12,12 @@ export function TracingCanvas({ letter, onDone }: { letter: string; onDone?: () 
   const [done, setDone] = useState(false);
 
   useEffect(() => {
+    // 切换到下一个字母（例如从大写 A 切到小写 a）时，重新开始描写。
+    strokes.current = 0;
+    drawing.current = false;
+    last.current = null;
+    setDone(false);
+
     const c = canvasRef.current;
     if (!c) return;
     const ctx = c.getContext('2d');
@@ -24,7 +30,8 @@ export function TracingCanvas({ letter, onDone }: { letter: string; onDone?: () 
     ctx.fillStyle = '#C9DFB7';
     ctx.font = 'bold 200px "Baloo 2", system-ui, sans-serif';
     ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
-    ctx.fillText(letter.toUpperCase(), 140, 150);
+    // 按题目传入的大小写原样显示，不能把小写字母强制转成大写。
+    ctx.fillText(letter, 140, 150);
     // 描线样式
     ctx.lineCap = 'round'; ctx.lineJoin = 'round';
     ctx.strokeStyle = '#427831'; ctx.lineWidth = 14;
