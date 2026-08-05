@@ -99,7 +99,7 @@ export function HomePage() {
       {grade === 'L1' && <AlphabetStarter />}
 
       <section className="sticker-reward-strip mt-5" aria-labelledby="sticker-reward-heading">
-        <div className="min-w-0 flex-1">
+        <div className="min-w-0 flex-1 xl:min-w-[330px]">
           <span className="sticker-kicker">✨ 今日贴纸补给</span>
           <h2 id="sticker-reward-heading" className="mt-1 font-display text-xl font-extrabold text-forest-900 sm:text-2xl">完成学习，挑一张喜欢的贴纸</h2>
           <p className="mt-1 text-sm font-medium text-forest-600">动物、花朵、生日礼物和小点心，都已经放进贴纸口袋啦。</p>

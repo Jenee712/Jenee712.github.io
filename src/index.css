@@ -139,10 +139,10 @@
   .hero-sticker-rabbit { @apply bottom-12 left-[42%] rotate-6; width: 88px; height: 88px; }
   .hero-sticker-gift { @apply right-8 top-8 rotate-6 lg:right-[27%]; width: 66px; height: 66px; }
 
-  .sticker-reward-strip { @apply relative flex flex-col items-start gap-4 overflow-hidden rounded-[28px] bg-gradient-to-r from-[#fff0f6]/95 via-white/95 to-[#ecf9ff]/95 p-5 shadow-soft ring-1 ring-white/90 backdrop-blur sm:p-6 lg:flex-row lg:items-center; }
+  .sticker-reward-strip { @apply relative flex flex-col items-start gap-4 overflow-hidden rounded-[28px] bg-gradient-to-r from-[#fff0f6]/95 via-white/95 to-[#ecf9ff]/95 p-5 shadow-soft ring-1 ring-white/90 backdrop-blur sm:p-6 xl:flex-row xl:items-center; }
   .sticker-reward-strip::before { content: ''; @apply pointer-events-none absolute -bottom-10 -left-8 h-32 w-32 rounded-full bg-[#ffd7e7]/40; }
   .sticker-kicker { @apply inline-flex rounded-full bg-[#ffdceb] px-3 py-1 text-xs font-extrabold tracking-wide text-[#a6456d]; }
-  .sticker-preview-row { @apply relative flex w-full items-center gap-2 overflow-x-auto px-1 py-1 scrollbar-none lg:w-auto; }
+  .sticker-preview-row { @apply relative flex w-full items-center gap-2 overflow-x-auto px-1 py-1 scrollbar-none xl:w-auto; }
   .sticker-preview-row .sticker-crop { @apply transition hover:-translate-y-1 hover:rotate-3; }
   .sticker-preview-row .sticker-crop:nth-child(2) { transform: rotate(3deg); }
   .sticker-preview-row .sticker-crop:nth-child(3) { transform: rotate(-3deg); }
